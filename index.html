@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Verse - Home</title>
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }</style>
+</head>
+<body class="min-h-screen text-white flex flex-col justify-between">
+  <header class="bg-white/10 backdrop-blur-md p-4 text-center border-b border-white/20">
+    <h1 class="font-bold text-3xl text-yellow-300">🌌 STUDY VERSE</h1>
+    <p class="text-xs italic mt-1 text-cyan-200">"The journey of a thousand miles begins with a single step."</p>
+  </header>
+  <div id="pwa-banner" class="hidden bg-yellow-400 text-purple-950 p-2 text-center text-xs font-bold flex justify-between px-4">
+    <span>📲 Install Study Verse on your device!</span><button onclick="installApp()" class="bg-purple-900 text-white px-3 py-0.5 rounded-full">Install</button>
+  </div>
+  <main class="max-w-2xl w-full mx-auto p-4 my-auto text-center space-y-6">
+    <div class="bg-white/10 p-8 rounded-3xl border border-white/20 shadow-2xl">
+      <h2 class="font-black text-4xl text-white mb-4">Welcome, Space Explorer! 🚀</h2>
+      <p class="text-purple-100 mb-6">Step into an interactive dimension designed to accelerate your studies, track metrics, challenge your brain, and earn mythical badges!</p>
+      <a href="profile.html" class="inline-block bg-yellow-400 hover:bg-yellow-300 text-purple-950 font-black text-xl px-10 py-4 rounded-2xl shadow-xl transition-transform transform hover:-translate-y-1">Create Profile</a>
+    </div>
+    <div class="bg-black/30 p-6 rounded-2xl text-left border border-white/10">
+      <h3 class="font-bold text-lg text-yellow-300 mb-2">📖 Quick Student Manual:</h3>
+      <ul class="space-y-1.5 text-xs text-purple-200 list-disc list-inside">
+        <li>Create your profile to unlock your personal learning dashboard.</li>
+        <li>Mark daily attendance to build consistency streaks.</li>
+        <li>Set multi-day milestones, generate dynamic quizzes, and view analytics.</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="bg-black/20 p-4 text-center text-xs text-purple-200 border-t border-white/10"><p class="font-bold">Made By Pathak Rohit</p></footer>
+  <script>
+    let defPrompt; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); defPrompt = e; document.getElementById('pwa-banner').classList.remove('hidden'); });
+    function installApp() { if(defPrompt) { defPrompt.prompt(); document.getElementById('pwa-banner').classList.add('hidden'); } }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+    if(localStorage.getItem('sv_profile')) window.location.href = 'dashboard.html';
+  </script>
+</body>
+        </html>
+      
