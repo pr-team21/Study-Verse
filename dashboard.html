@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Study Verse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }</style>
+</head>
+<body class="min-h-screen text-white flex flex-col justify-between">
+  <header class="bg-white/10 backdrop-blur-md p-4 text-center border-b border-white/20">
+    <h1 class="font-bold text-3xl text-yellow-300">🌌 STUDY VERSE</h1>
+    <p class="text-xs italic mt-1 text-cyan-200">"Believe you can and you're halfway there."</p>
+  </header>
+  <main class="max-w-4xl w-full mx-auto p-4 space-y-6 flex-grow">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- User Profile Card -->
+      <div class="bg-gradient-to-r from-yellow-400 to-orange-400 p-6 rounded-2xl shadow-lg text-purple-950">
+        <h3 class="font-bold text-2xl">👤 User Profile</h3>
+        <p id="prof-name" class="text-lg font-bold mt-2">Loading...</p>
+        <p id="prof-class" class="text-sm opacity-90">Class</p>
+      </div>
+      <!-- Attendance Card -->
+      <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-bold text-cyan-300 uppercase">Attendance Board</span>
+          <div id="current-date" class="text-sm font-bold mt-1">Date: --/--/----</div>
+        </div>
+        <div id="att-actions" class="flex space-x-2 mt-3">
+          <button onclick="mark(true)" class="flex-1 bg-emerald-500 py-1.5 rounded-xl font-bold">Present</button>
+          <button onclick="mark(false)" class="flex-1 bg-rose-500 py-1.5 rounded-xl font-bold">Absent</button>
+        </div>
+        <div id="att-done" class="text-xs text-yellow-300 font-bold mt-3 hidden">✓ Attendance locked for today!</div>
+      </div>
+    </div>
+
+    <!-- Active Target Framework Display Box -->
+    <div id="target-view-box" class="bg-cyan-950/50 p-4 rounded-2xl border border-cyan-400/30 hidden">
+      <h4 class="text-xs font-bold text-yellow-300 uppercase">🎯 Target Details</h4>
+      <p class="text-xs mt-1">Duration: <span id="target-days" class="font-bold text-white"></span></p>
+    </div>
+
+    <!-- Navigation Options Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <a href="set-goal.html" class="bg-white/10 p-4 rounded-xl text-center hover:bg-white/20 border border-white/10"><span class="text-2xl block">🎯</span><span class="text-xs font-bold">SET GOAL</span></a>
+      <a href="practice.html" class="bg-white/10 p-4 rounded-xl text-center hover:bg-white/20 border border-white/10"><span class="text-2xl block">📝</span><span class="text-xs font-bold">PRACTICE QUESTIONS</span></a>
+      <a href="notes.html" class="bg-white/10 p-4 rounded-xl text-center hover:bg-white/20 border border-white/10"><span class="text-2xl block">📚</span><span class="text-xs font-bold">SHORT NOTES</span></a>
+      <a href="analysis.html" class="bg-white/10 p-4 rounded-xl text-center hover:bg-white/20 border border-white/10"><span class="text-2xl block">📊</span><span class="text-xs font-bold">ACADEMIC ANALYSIS</span></a>
+      <a href="progress.html" class="bg-white/10 p-4 rounded-xl text-center hover:bg-white/20 border border-white/10"><span class="text-2xl block">📈</span><span class="text-xs font-bold">TRACK PROGRESS</span></a>
+      <a href="achievements.html" class="bg-white/10 p-4 rounded-xl text-center hover:bg-white/20 border border-white/10"><span class="text-2xl block">🏆</span><span class="text-xs font-bold">ACHIEVEMENTS</span></a>
+    </div>
+
+    <!-- Maintenance Console Utilities -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-4">
+      <a href="profile.html" class="bg-blue-600 text-center py-2.5 text-xs font-bold rounded-xl">✏️ EDIT PROFILE</a>
+      <a href="set-goal.html" class="bg-amber-600 text-center py-2.5 text-xs font-bold rounded-xl">🎯 EDIT TARGET</a>
+      <button onclick="wipe()" class="bg-rose-700 py-2.5 text-xs font-bold rounded-xl">🚨 DELETE PROFILE</button>
+    </div>
+  </main>
+  <footer class="bg-black/20 p-4 text-center text-xs text-purple-200 border-t border-white/10"><p class="font-bold">Made By Pathak Rohit</p></footer>
+  <script>
+    const prof = JSON.parse(localStorage.getItem('sv_profile') || 'null');
+    if(!prof) window.location.href = 'index.html';
+    else { document.getElementById('prof-name').innerText = prof.name; document.getElementById('prof-class').innerText = prof.class; }
+    
+    document.getElementById('current-date').innerText = `Date: ${new Date().toLocaleDateString()}`;
+    const today = new Date().toISOString().split('T')[0];
+    const att = JSON.parse(localStorage.getItem('sv_attendance') || '{}');
+    if(att[today] !== undefined) { document.getElementById('att-actions').classList.add('hidden'); document.getElementById('att-done').classList.remove('hidden'); }
+    
+    function mark(status) { att[today] = status; localStorage.setItem('sv_attendance', JSON.stringify(att)); location.reload(); }
+    function wipe() { if(confirm('Delete everything?')) { localStorage.clear(); window.location.href = 'index.html'; } }
+
+    const tg = JSON.parse(localStorage.getItem('sv_target') || 'null');
+    if(tg) { document.getElementById('target-view-box').classList.remove('hidden'); document.getElementById('target-days').innerText = `${tg.start} to ${tg.end}`; }
+  </script>
+</body>
+                                          </html>
+      
