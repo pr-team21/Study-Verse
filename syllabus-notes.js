@@ -1,122 +1,52 @@
 window.notesDatabase = {
   "Class 10": {
     "Physics": {
-      "Light - Reflection and Refraction": "💡 <b>Light Core Notes:</b><br>1. <b>Reflection:</b> The angle of incidence ($i$) is always equal to the angle of reflection ($r$).<br>2. <b>Mirror Formula:</b> $\\frac{1}{f} = \\frac{1}{v} + \\frac{1}{u}$.<br>3. <b>Refractive Index:</b> $n = \\frac{c}{v}$ (Speed of light in vacuum / Speed of light in medium).",
-      "Human Eye and Colorful World": "👁️ <b>Human Eye Notes:</b><br>1. <b>Myopia (Near-sightedness):</b> Corrected using a concave lens.<br>2. <b>Hypermetropia (Far-sightedness):</b> Corrected using a convex lens.",
-      "Electricity": "⚡ Notes coming soon! Add your text here.",
-      "Magnetic Effects of Electric Current": "🧲 Notes coming soon!"
+      "Light - Reflection and Refraction": "💡 <b>Light Core Notes:</b><br><br>1. <b>Laws of Reflection:</b> The angle of incidence equals the angle of reflection ($i = r$). The incident ray, normal, and reflected ray all lie in the same plane.<br>2. <b>Mirror Formula:</b> $\\frac{1}{f} = \\frac{1}{v} + \\frac{1}{u}$ (where $f$ is focal length, $v$ is image distance, and $u$ is object distance).<br>3. <b>Refraction:</b> Bending of light when crossing mediums. <i>Snell's Law:</i> $\\frac{\\sin i}{\\sin r} = \\text{constant}$ (Refractive Index).",
+      "Human Eye and Colorful World": "👁️ <b>Human Eye Notes:</b><br><br>1. <b>Power of Accommodation:</b> The ability of the eye lens to adjust its focal length.<br>2. <b>Myopia (Near-sightedness):</b> Person can see nearby objects clearly but distant objects are blurry. Corrected using a <b>Concave Lens</b>.<br>3. <b>Hypermetropia (Far-sightedness):</b> Person can see distant objects clearly but nearby objects are blurry. Corrected using a <b>Convex Lens</b>.",
+      "Electricity": "⚡ <b>Electricity Notes:</b><br><br>1. <b>Electric Current ($I$):</b> Rate of flow of electric charge. $I = \\frac{Q}{t}$ (Measured in Amperes).<br>2. <b>Ohm's Law:</b> Potential difference across a metallic wire is directly proportional to the current flowing through it, provided temperature remains constant ($V = IR$).",
+      "Magnetic Effects of Electric Current": "🧲 Notes coming soon! Open this file on your phone to replace this text with your notes."
     },
     "Chemistry": {
-      "Chemical Reactions and Equations": "🧪 <b>Chemical Reactions Notes:</b><br>1. <b>Combination Reaction:</b> Two elements or compounds combine to form a single product ($A + B \\rightarrow AB$).<br>2. <b>Balancing Equations:</b> Done to satisfy the Law of Conservation of Mass.",
-      "Acids, Bases and Salts": "🧼 Notes coming soon!",
+      "Chemical Reactions and Equations": "🧪 <b>Chemical Reactions Notes:</b><br><br>1. <b>Combination:</b> Two reactants form one product ($A + B \\rightarrow AB$).<br>2. <b>Decomposition:</b> One reactant breaks down into two or more products ($AB \\rightarrow A + B$).<br>3. <b>Displacement:</b> More reactive element displaces a less reactive element ($A + BC \\rightarrow AC + B$).",
+      "Acids, Bases and Salts": "🧼 <b>Acids, Bases & Salts Notes:</b><br><br>1. <b>Acids:</b> Sour taste, turn blue litmus red, release $H^+$ ions in water.<br>2. <b>Bases:</b> Bitter taste, soapy feel, turn red litmus blue, release $OH^-$ ions in water.<br>3. <b>pH Scale:</b> Measures acidity. pH < 7 is Acidic, pH = 7 is Neutral, pH > 7 is Basic.",
       "Metals and Non-metals": "🛠️ Notes coming soon!",
       "Carbon and its Compounds": "🔥 Notes coming soon!"
     },
     "Mathematics": {
-      "Real Numbers": "🔢 <b>Real Numbers Notes:</b><br>1. <b>Fundamental Theorem of Arithmetic:</b> Every composite number can be expressed uniquely as a product of prime numbers.",
+      "Real Numbers": "🔢 <b>Real Numbers Notes:</b><br><br>1. <b>Fundamental Theorem of Arithmetic:</b> Every composite number can be uniquely expressed as a product of primes.<br>2. <b>HCF and LCM Relation:</b> For any two positive integers $a$ and $b$: $\\text{HCF}(a,b) \\times \\text{LCM}(a,b) = a \\times b$.",
       "Polynomials": "📈 Notes coming soon!",
-      "Pair of Linear Equations in Two Variables": "📊 Notes coming soon!",
-      "Quadratic Equations": "✏️ Notes coming soon!",
-      "Arithmetic Progressions": "🔢 Notes coming soon!",
-      "Triangles": "📐 Notes coming soon!",
-      "Coordinate Geometry": "📍 Notes coming soon!",
-      "Introduction to Trigonometry": "📐 Notes coming soon!",
-      "Some Applications of Trigonometry": "🏔️ Notes coming soon!",
-      "Circles": "⭕ Notes coming soon!",
-      "Areas Related to Circles": "🥧 Notes coming soon!",
-      "Surface Areas and Volumes": "📦 Notes coming soon!",
-      "Statistics": "📊 Notes coming soon!",
-      "Probability": "🎲 Notes coming soon!"
+      "Quadratic Equations": "✏️ Notes coming soon!"
     }
   },
   "Class 11": {
     "Physics": {
-      "Units and Measurements": "📏 <b>Units & Measurements Notes:</b><br>1. <b>SI Units:</b> Mass (kg), Length (m), Time (s).<br>2. <b>Dimensions:</b> Expressing physical quantities using base symbols $[M]$, $[L]$, $[T]$.",
-      "Motion in a Straight Line": "🏃‍♂️ Notes coming soon!",
-      "Motion in a Plane": "✈️ Notes coming soon!",
-      "Laws of Motion": "🍎 Notes coming soon!",
-      "Work, Energy and Power": "⚡ Notes coming soon!",
-      "System of Particles and Rotational Motion": "🔄 Notes coming soon!",
-      "Gravitation": "🌍 Notes coming soon!",
-      "Mechanical Properties of Solids": "🏗️ Notes coming soon!",
-      "Mechanical Properties of Fluids": "💧 Notes coming soon!",
-      "Thermal Properties of Matter": "🌡️ Notes coming soon!",
-      "Thermodynamics": "🔥 Notes coming soon!",
-      "Kinetic Theory": "⚛️ Notes coming soon!",
-      "Oscillations": "⏳ Notes coming soon!",
-      "Waves": "🌊 Notes coming soon!"
+      "Units and Measurements": "📏 <b>Units & Measurements Notes:</b><br><br>1. <b>SI Fundamental Units:</b> Mass (kg), Length (m), Time (s), Electric Current (A), Temperature (K), Amount of substance (mol), Luminous intensity (cd).<br>2. <b>Errors:</b> Absolute Error, Relative Error, and Percentage Error ($=\\frac{\\Delta a}{a_{mean}} \\times 100\\%$).",
+      "Motion in a Straight Line": "🏃‍♂️ <b>Straight Line Motion Notes:</b><br><br>1. <b>Distance vs Displacement:</b> Distance is actual path length (scalar); Displacement is shortest path between start and end points (vector).<br>2. <b>Equations of Motion (Constant Acceleration):</b><br>• $v = u + at$<br>• $s = ut + \\frac{1}{2}at^2$<br>• $v^2 = u^2 + 2as$",
+      "Laws of Motion": "🍎 Notes coming soon!"
     },
     "Chemistry": {
-      "Some Basic Concepts of Chemistry": "🧪 <b>Basic Concepts Notes:</b><br>1. <b>Mole Concept:</b> $1 \\text{ mole} = 6.022 \\times 10^{23}$ particles.<br>2. <b>Molarity ($M$):</b> $\\text{moles of solute} / \\text{volume of solution in liters}$.",
-      "Structure of Atom": "⚛️ Notes coming soon!",
-      "Classification of Elements and Periodicity": "📅 Notes coming soon!",
-      "Chemical Bonding and Molecular Structure": "🤝 Notes coming soon!",
-      "Chemical Thermodynamics": "🔥 Notes coming soon!",
-      "Equilibrium": "⚖️ Notes coming soon!",
-      "Redox Reactions": "🔋 Notes coming soon!",
-      "Organic Chemistry - Some Basic Principles": "🌿 Notes coming soon!",
-      "Hydrocarbons": "⛽ Notes coming soon!"
+      "Some Basic Concepts of Chemistry": "🧪 <b>Basic Concepts Notes:</b><br><br>1. <b>Mole Concept:</b> $1 \\text{ mole} = 6.022 \\times 10^{23}$ atoms/molecules/ions (Avogadro's Number).<br>2. <b>Molarity ($M$):</b> $\\frac{\\text{Moles of solute}}{\\text{Volume of solution in Liters}}$<br>3. <b>Molality ($m$):</b> $\\frac{\\text{Moles of solute}}{\\text{Mass of solvent in kg}}$",
+      "Structure of Atom": "⚛️ Notes coming soon!"
     },
     "Mathematics": {
-      "Sets": "📁 <b>Sets Notes:</b><br>1. <b>Definition:</b> A well-defined collection of objects.<br>2. <b>Union ($A \\cup B$):</b> Elements belonging to $A$ or $B$ or both.",
-      "Relations and Functions": "🧬 Notes coming soon!",
-      "Trigonometric Functions": "📐 Notes coming soon!",
-      "Complex Numbers and Quadratic Equations": "🔢 Notes coming soon!",
-      "Linear Inequalities": "📈 Notes coming soon!",
-      "Permutations and Combinations": "🎲 Notes coming soon!",
-      "Binomial Theorem": "🧬 Notes coming soon!",
-      "Sequences and Series": "🔢 Notes coming soon!",
-      "Straight Lines": "📏 Notes coming soon!",
-      "Conic Sections": "📐 Notes coming soon!",
-      "Introduction to Three Dimensional Geometry": "📦 Notes coming soon!",
-      "Limits and Derivatives": "📉 Notes coming soon!",
-      "Statistics": "📊 Notes coming soon!",
-      "Probability": "🎲 Notes coming soon!"
+      "Sets": "📁 <b>Sets Notes:</b><br><br>1. <b>Set:</b> A well-defined collection of objects.<br>2. <b>Operations:</b><br>• <i>Union ($A \\cup B$):</i> Elements in $A$ OR $B$ OR both.<br>• <i>Intersection ($A \\cap B$):</i> Common elements belonging to BOTH $A$ and $B$.<br>3. <b>Empty Set ($\\emptyset$):</b> A set with zero elements.",
+      "Relations and Functions": "🧬 Notes coming soon!"
     }
   },
   "Class 12": {
     "Physics": {
-      "Electric Charges and Fields": "⚡ <b>Electrostatics Notes:</b><br>1. <b>Coulomb's Law:</b> $F = k \\cdot \\frac{q_1 q_2}{r^2}$.<br>2. <b>Electric Flux:</b> $\\Phi = E \\cdot A \\cdot \\cos\\theta$.",
-      "Electrostatic Potential and Capacitance": "🔋 Notes coming soon!",
-      "Current Electricity": "🔌 Notes coming soon!",
-      "Moving Charges and Magnetism": "🧲 Notes coming soon!",
-      "Magnetism and Matter": "🌍 Notes coming soon!",
-      "Electromagnetic Induction": "🌀 Notes coming soon!",
-      "Alternating Current": "〰️ Notes coming soon!",
-      "Electromagnetic Waves": "📡 Notes coming soon!",
-      "Ray Optics and Optical Instruments": "👓 Notes coming soon!",
-      "Wave Optics": "🌊 Notes coming soon!",
-      "Dual Nature of Radiation and Matter": "☀️ Notes coming soon!",
-      "Atoms": "⚛️ Notes coming soon!",
-      "Nuclei": "💥 Notes coming soon!",
-      "Semiconductor Electronics": "💻 Notes coming soon!"
+      "Electric Charges and Fields": "⚡ <b>Electric Fields Notes:</b><br><br>1. <b>Quantization of Charge:</b> $Q = \\pm ne$ (where $e = 1.6 \\times 10^{-19}$ C).<br>2. <b>Coulomb's Law:</b> Electrostatic force $F = \frac{1}{4\\pi\\varepsilon_0} \\cdot \\frac{q_1 q_2}{r^2}$.<br>3. <b>Electric Field ($E$):</b> Force experienced per unit positive test charge ($E = \\frac{F}{q}$).",
+      "Current Electricity": "🔌 <b>Current Electricity Notes:</b><br><br>1. <b>Drift Velocity ($v_d$):</b> Average velocity gained by free electrons under an electric field ($v_d = \\frac{eE\\tau}{m}$).<br>2. <b>Kirchhoff's Rules:</b><br>• <i>Junction Rule (KCL):</i> Total current entering a node = Total current leaving.<br>• <i>Loop Rule (KVL):</i> Total potential changes around any closed loop = 0.",
+      "Electrostatic Potential and Capacitance": "🔋 Notes coming soon!"
     },
     "Chemistry": {
-      "Solutions": "🧪 <b>Solutions Notes:</b><br>1. <b>Raoult's Law:</b> $p = p^0 \\times x$.<br>2. <b>Colligative Properties:</b> Depend purely on the number of solute particles.",
-      "Electrochemistry": "🔋 Notes coming soon!",
-      "Chemical Kinetics": "⏱️ Notes coming soon!",
-      "d and f Block Elements": "🧪 Notes coming soon!",
-      "Coordination Compounds": "💠 Notes coming soon!",
-      "Haloalkanes and Haloarenes": "🌿 Notes coming soon!",
-      "Alcohols, Phenols and Ethers": "🧪 Notes coming soon!",
-      "Aldehydes, Ketones and Carboxylic Acids": "🍯 Notes coming soon!",
-      "Amines": "🐟 Notes coming soon!",
-      "Biomolecules": "🧬 Notes coming soon!"
+      "Solutions": "🧪 <b>Solutions Notes:</b><br><br>1. <b>Raoult's Law:</b> For a solution of volatile liquids, partial vapor pressure of each component is directly proportional to its mole fraction ($p_1 = p_1^0 x_1$).<br>2. <b>Colligative Properties:</b> Properties depending solely on particle count (e.g., Elevation of Boiling Point, Depression of Freezing Point, Osmotic Pressure).",
+      "Electrochemistry": "🔋 Notes coming soon!"
     },
     "Mathematics": {
-      "Relations and Functions": "🧬 <b>Relations Notes:</b><br>1. <b>Reflexive:</b> $(a, a) \\in R$ for all $a$.<br>2. <b>Symmetric:</b> If $(a, b) \\in R$, then $(b, a) \\in R$.<br>3. <b>Transitive:</b> If $(a, b) \\in R$ and $(b, c) \\in R$, then $(a, c) \\in R$.",
-      "Inverse Trigonometric Functions": "📐 Notes coming soon!",
-      "Matrices": "🧮 Notes coming soon!",
-      "Determinants": "📐 Notes coming soon!",
-      "Continuity and Differentiability": "📈 Notes coming soon!",
-      "Application of Derivatives": "📉 Notes coming soon!",
-      "Integrals": "⏳ Notes coming soon!",
-      "Application of Integrals": "📊 Notes coming soon!",
-      "Differential Equations": "🧬 Notes coming soon!",
-      "Vector Algebra": "🏹 Notes coming soon!",
-      "Three Dimensional Geometry": "📦 Notes coming soon!",
-      "Linear Programming": "📊 Notes coming soon!",
-      "Probability": "🎲 Notes coming soon!"
+      "Relations and Functions": "🧬 <b>Relations & Functions Notes:</b><br><br>1. <b>Reflexive Relation:</b> $(a, a) \\in R$ for all $a \\in A$.<br>2. <b>Symmetric Relation:</b> If $(a, b) \\in R$, then $(b, a) \\in R$.<br>3. <b>Transitive Relation:</b> If $(a, b) \\in R$ and $(b, c) \\in R$, then $(a, c) \\in R$.<br>4. <b>Equivalence Relation:</b> A relation that satisfies all three rules above.",
+      "Matrices": "🧮 Notes coming soon!"
     }
   }
 };
+
