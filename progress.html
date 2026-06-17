@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Progress - Study Verse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }</style>
+</head>
+<body class="min-h-screen text-white flex flex-col justify-between">
+  <header class="bg-white/10 backdrop-blur-md p-4 text-center border-b border-white/20">
+    <h1 class="font-bold text-3xl text-yellow-300">🌌 STUDY VERSE</h1>
+    <p class="text-xs italic mt-1 text-cyan-200">"Progress is quiet, but results speak loudly."</p>
+  </header>
+  <main class="max-w-md w-full mx-auto p-4 flex-grow my-4 space-y-4">
+    <div class="bg-white text-gray-800 p-6 rounded-3xl shadow-xl space-y-4">
+      <h2 class="font-bold text-xl text-center text-purple-900">📈 Progress Metrics</h2>
+      <div class="grid grid-cols-2 gap-2 text-center text-xs font-bold">
+        <div class="bg-gray-50 p-2 rounded-xl border"><span>PRESENT</span><div id="p-p" class="text-lg text-emerald-600">0</div></div>
+        <div class="bg-gray-50 p-2 rounded-xl border"><span>ABSENT</span><div id="p-a" class="text-lg text-rose-600">0</div></div>
+        <div class="bg-purple-50 p-2 rounded-xl border"><span>STREAK</span><div id="p-s" class="text-lg text-purple-700">🔥 0 Days</div></div>
+        <div class="bg-cyan-50 p-2 rounded-xl border"><span>REMAINING</span><div id="p-r" class="text-lg text-cyan-700">-- Days</div></div>
+      </div>
+      <div class="border-t pt-3">
+        <span class="text-xs font-bold text-gray-400 block mb-2 uppercase">Objective Checklist</span>
+        <div id="chk-box" class="space-y-1.5 text-xs text-gray-700 font-medium"></div>
+        <div class="mt-3 bg-gray-100 h-3 rounded-full overflow-hidden">
+          <div id="p-bar" class="bg-purple-600 h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+      <a href="dashboard.html" class="block text-center bg-gray-800 text-white font-bold text-xs py-2 rounded-xl">Back</a>
+    </div>
+  </main>
+  <footer class="bg-black/20 p-4 text-center text-xs text-purple-200 border-t border-white/10"><p class="font-bold">Made By Pathak Rohit</p></footer>
+  <script>
+    const att = JSON.parse(localStorage.getItem('sv_attendance') || '{}');
+    let p=0, ab=0, st=0, cur=0;
+    Object.keys(att).sort().forEach(d => { if(att[d]) { p++; cur++; if(cur>st) st=cur; } else { ab++; cur=0; } });
+    document.getElementById('p-p').innerText = p; document.getElementById('p-a').innerText = ab; document.getElementById('p-s').innerText = `🔥 ${st} Days`;
+
+    const tg = JSON.parse(localStorage.getItem('sv_target') || 'null');
+    let done = JSON.parse(localStorage.getItem('sv_done_tasks') || '[]');
+    if(tg) {
+      const diff = new Date(tg.end) - new Date();
+      document.getElementById('p-r').innerText = `${Math.max(0, Math.ceil(diff/(1000*60*60*24)))} Days`;
+      const box = document.getElementById('chk-box');
+      tg.tasks.forEach((t, i) => {
+        const isChecked = done.includes(i) ? 'checked' : '';
+        box.innerHTML += `<label class="flex items-center space-x-2 p-1.5 bg-gray-50 border rounded-lg"><input type="checkbox" onchange="toggleT(${i})" ${isChecked}> <span class="${isChecked?'line-through text-gray-400':''}">${t}</span></label>`;
+      });
+      document.getElementById('p-bar').style.width = `${(done.length/tg.tasks.length)*100}%`;
+    } else {
+      document.getElementById('chk-box').innerHTML = '<p class="italic text-gray-400">Setup targeted objectives first.</p>';
+    }
+
+    function toggleT(i) {
+      if(done.includes(i)) done = done.filter(x => x !== i); else done.push(i);
+      localStorage.setItem('sv_done_tasks', JSON.stringify(done)); location.reload();
+    }
+  </script>
+</body>
+</html>
+
