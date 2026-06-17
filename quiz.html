@@ -1,70 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Examination - Study Verse</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Engine - Study Verse</title>
+  <!-- Tailwind CSS Framework -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-  <style>body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }</style>
+  
+  <!-- 📱 LINK TO YOUR MASTER QUESTION BANK DATA FILE -->
+  <script src="syllabus-questions.js"></script>
+
+  <style>
+    body { 
+      font-family: 'Quicksand', sans-serif; 
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
+    }
+  </style>
 </head>
 <body class="min-h-screen text-white flex flex-col justify-between">
-  <header class="bg-white/10 backdrop-blur-md p-4 text-center border-b border-white/20">
-    <h1 class="font-bold text-3xl text-yellow-300">🌌 STUDY VERSE</h1>
-    <p class="text-xs italic mt-1 text-cyan-200">"Strive for progress, not perfection."</p>
-  </header>
-  <main class="max-w-xl w-full mx-auto p-4 flex-grow my-4 space-y-4">
-    <!-- Live Testing Wrapper -->
-    <div id="quiz-block" class="bg-white text-gray-800 p-6 rounded-3xl shadow-xl">
-      <h2 id="scope-title" class="font-bold text-lg text-purple-800 border-b pb-2 mb-4">Quiz Engine</h2>
-      <div id="questions-box" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
-      <button onclick="gradeQuiz()" class="w-full mt-4 bg-purple-600 text-white font-bold py-2.5 rounded-xl">Submit</button>
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-900/60 backdrop-blur-md p-4 text-center border-b border-white/10 flex justify-between items-center px-6">
+    <a href="practice.html" class="text-xs font-bold text-slate-400 hover:text-cyan-400 transition">◀ Exit</a>
+    <div>
+      <h1 id="quiz-heading" class="font-bold text-lg text-cyan-400">Loading Quiz...</h1>
+      <p id="quiz-subheading" class="text-xxs text-slate-400 tracking-wide uppercase mt-0.5">Practice Session</p>
     </div>
-    <!-- Results Dashboard Wrapper -->
-    <div id="result-block" class="bg-white text-gray-800 p-6 rounded-3xl shadow-xl hidden text-center space-y-4">
-      <h2 class="font-bold text-2xl text-purple-900">Performance Report</h2>
-      <div class="bg-gray-50 p-4 rounded-xl text-sm space-y-2 border text-left">
-        <p class="flex justify-between"><span>Attempted:</span> <span id="r-att" class="font-bold">0</span></p>
-        <p class="flex justify-between text-emerald-600"><span>Correct Answers:</span> <span id="r-cor" class="font-bold">0</span></p>
-        <p class="flex justify-between text-rose-600"><span>Incorrect Answers:</span> <span id="r-inc" class="font-bold">0</span></p>
+    <div class="w-8"></div> <!-- Empty spacer for balance -->
+  </header>
+
+  <!-- Interactive Quiz Card Container -->
+  <main class="max-w-md w-full mx-auto p-4 my-auto">
+    
+    <!-- Progress Indicator -->
+    <div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-400">
+      <span id="question-counter">Question 0 of 0</span>
+      <span id="score-counter" class="text-emerald-400 font-bold">Score: 0</span>
+    </div>
+
+    <div class="bg-slate-900/90 border border-white/10 p-6 rounded-3xl shadow-2xl space-y-5 backdrop-blur-xl">
+      
+      <!-- Target Question Display Area -->
+      <div class="space-y-2">
+        <h2 id="question-text" class="text-base font-bold text-slate-100 leading-relaxed">
+          Retrieving your practice set data questions...
+        </h2>
       </div>
-      <a href="dashboard.html" class="block w-full bg-gray-800 text-white py-2.5 rounded-xl font-bold">Return to Dashboard</a>
+
+      <!-- Option Action Buttons Group -->
+      <div id="options-container" class="space-y-2.5">
+        <!-- Generated dynamically via JavaScript -->
+      </div>
+      
+      <!-- Control Buttons Footer -->
+      <div class="pt-2 flex space-x-3">
+        <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/10">
+          Next Question ➡️
+        </button>
+      </div>
+
     </div>
   </main>
-  <footer class="bg-black/20 p-4 text-center text-xs text-purple-200 border-t border-white/10"><p class="font-bold">Made By Pathak Rohit</p></footer>
-  <script>
-    document.getElementById('scope-title').innerText = sessionStorage.getItem('quiz_scope') || 'Dynamic Assessment';
-    const pool = [
-      {q: "Identify the primary unit configuration vector calculation formula path.", o: ["Node A", "Vector Matrix B", "Dynamic Resolving Array", "Control Loop"], c: 1},
-      {q: "What component functions directly under standard thermal conditions?", o: ["Element 1", "Isotope Core", "Synthesized Loop", "Catalyst Node"], c: 0},
-      {q: "Evaluate the primary derivative function threshold parameter.", o: ["Zero Limit", "Infinite Range", "Fixed Baseline", "Dynamic Vector"], c: 2}
-    ];
-    const container = document.getElementById('questions-box');
-    pool.forEach((item, idx) => {
-      let opts = ''; item.o.forEach((o,oi) => {
-        opts += `<label class="flex items-center space-x-2 p-2 border rounded-xl text-sm bg-gray-50 hover:bg-purple-50 cursor-pointer"><input type="radio" name="q-${idx}" value="${oi}"> <span>${o}</span></label>`;
-      });
-      container.innerHTML += `<div class="space-y-2 border-b pb-3"><p class="font-bold text-sm text-gray-800">${idx+1}. ${item.q}</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">${opts}</div></div>`;
-    });
 
-    function gradeQuiz() {
-      let att = 0, cor = 0, inc = 0;
-      pool.forEach((item, idx) => {
-        const sel = document.querySelector(`input[name="q-${idx}"]:checked`);
-        if(sel) { att++; if(parseInt(sel.value) === item.c) cor++; else inc++; }
-      });
-      if(att === 0) return alert('Answer at least one question.');
+  <!-- Global Results Dashboard Card (Hidden by default) -->
+  <div id="results-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-white/10 max-w-sm w-full p-6 rounded-3xl text-center space-y-4 shadow-2xl">
+      <h2 class="text-2xl font-bold text-yellow-400">🎉 Quiz Completed!</h2>
+      <p class="text-slate-300 text-sm">You have finished the evaluation sequence for this chapter.</p>
       
-      const st = JSON.parse(localStorage.getItem('sv_stats') || '{"total":0,"correct":0,"incorrect":0}');
-      st.total += att; st.correct += cor; st.incorrect += inc;
-      localStorage.setItem('sv_stats', JSON.stringify(st));
+      <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-bold">Your Total Score</p>
+        <p id="final-score" class="text-4xl font-bold text-cyan-400 mt-1">0 / 0</p>
+      </div>
 
-      document.getElementById('r-att').innerText = att;
-      document.getElementById('r-cor').innerText = cor;
-      document.getElementById('r-inc').innerText = inc;
-      document.getElementById('quiz-block').classList.add('hidden');
-      document.getElementById('result-block').classList.remove('hidden');
+      <div class="space-y-2 pt-2">
+        <button onclick="window.location.reload()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 rounded-xl transition">
+          🔄 Retake This Quiz
+        </button>
+        <a href="practice.html" class="block w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl transition text-sm">
+          Select Another Chapter
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Brand Signature -->
+  <footer class="bg-black/40 p-4 text-center text-xs text-slate-600 border-t border-white/5">
+    <p class="font-bold">Engine System Built by Pathak Rohit</p>
+  </footer>
+
+  <!-- ⚙️ CORE INTERACTIVE CONTROL SCRIPT -->
+  <script>
+    // Extract setup data from Session memory storage pipes
+    const targetSubject = sessionStorage.getItem('quiz_subject') || "Physics";
+    const targetChapter = sessionStorage.getItem('quiz_chapter') || "Electric Charges and Fields";
+
+    // Set UI labels based on selections
+    document.getElementById('quiz-heading').innerText = targetChapter;
+    document.getElementById('quiz-subheading').innerText = targetSubject;
+
+    // Pull active question arrays out of your window file: syllabus-questions.js
+    let questionsPool = [];
+    if (window.masterQuestionBank && window.masterQuestionBank[targetChapter]) {
+      questionsPool = window.masterQuestionBank[targetChapter];
+    } else {
+      // Fallback message if a user taps a chapter you haven't written questions for yet
+      questionsPool = [
+        {
+          q: `🚧 No questions uploaded for "${targetChapter}" yet! Open your syllabus-questions.js file on your phone to add them.`,
+          o: ["Return to Practice Selection Setup"],
+          c: 0,
+          isFallback: true
+        }
+      ];
     }
+
+    let currentIndex = 0;
+    let runningScore = 0;
+    let hasAnsweredCurrent = false;
+
+    function renderActiveQuestion() {
+      hasAnsweredCurrent = false;
+      document.getElementById('next-btn').classList.add('hidden');
+      
+      const currentQuestion = questionsPool[currentIndex];
+      
+      // Update counters display layout
+      document.getElementById('question-counter').innerText = `Question ${currentIndex + 1} of ${questionsPool.length}`;
+      document.getElementById('score-counter').innerText = `Score: ${runningScore}`;
+      document.getElementById('question-text').innerText = currentQuestion.q;
+      
+      // Clear out the old selection items buttons container loop
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+      
+      // Inject options array buttons list layout
+      currentQuestion.o.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 font-medium transition hover:bg-slate-800 active:scale-98 outline-none text-sm duration-150 flex justify-between items-center";
+        btn.innerText = option;
+        
+        // Handle tapping mechanics safely on phone touches
+        btn.onclick = () => selectOption(index, btn);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIndex, clickedButton) {
+      if (hasAnsweredCurrent) return; // Freeze clicks once an option is picked
+      
+      const currentQuestion = questionsPool[currentIndex];
+      
+      // Handle the safety redirect button if it's an empty fallback slide
+      if (currentQuestion.isFallback) {
+        window.location.href = "practice.html";
+        return;
+      }
+
+      hasAnsweredCurrent = true;
+      const optionsButtons = document.getElementById('options-container').children;
+      const correctIndex = currentQuestion.c;
+
+      if (selectedIndex === correctIndex) {
+        // Correct answer selected -> Paint it Emerald Green
+        clickedButton.classList.remove('bg-slate-800/60', 'border-slate-700');
+        clickedButton.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold');
+        clickedButton.innerHTML += ` <span class="text-emerald-400 font-bold">✓ Correct</span>`;
+        runningScore++;
+        document.getElementById('score-counter').innerText = `Score: ${runningScore}`;
+      } else {
+        // Wrong answer selected -> Paint it Red and highlight the correct choice in Green
+        clickedButton.classList.remove('bg-slate-800/60', 'border-slate-700');
+        clickedButton.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-300');
+        clickedButton.innerHTML += ` <span class="text-rose-400 font-bold">✗ Incorrect</span>`;
+        
+        const correctButton = optionsButtons[correctIndex];
+        correctButton.classList.remove('bg-slate-800/60', 'border-slate-700');
+        correctButton.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold');
+      }
+
+      // Unhide tracking controller forward progression button execution trigger element
+      document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      if (currentIndex + 1 < questionsPool.length) {
+        currentIndex++;
+        renderActiveQuestion();
+      } else {
+        // Reach terminal boundary state -> Unveil modal panel
+        document.getElementById('final-score').innerText = `${runningScore} / ${questionsPool.length}`;
+        document.getElementById('results-modal').classList.remove('hidden');
+      }
+    }
+
+    // Initialize execution right out of the structural gateway container frame link
+    renderActiveQuestion();
   </script>
 </body>
 </html>
-
