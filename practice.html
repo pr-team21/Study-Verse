@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
   
+  <!-- Link to your notes database -->
   <script src="syllabus-notes.js"></script>
 
   <style>
@@ -27,6 +28,7 @@
     <div class="bg-slate-900/80 border border-white/10 text-white p-6 rounded-3xl shadow-2xl space-y-4 backdrop-blur-lg">
       <h2 class="font-bold text-xl text-center text-cyan-300">🎯 Quiz Configuration Room</h2>
       
+      <!-- Class Selector -->
       <div>
         <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Select Your Class</label>
         <select id="c-sel" class="w-full mt-1 p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium focus:ring-2 focus:ring-cyan-500 outline-none">
@@ -36,6 +38,7 @@
         </select>
       </div>
 
+      <!-- Subject Selector -->
       <div>
         <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Select Subject</label>
         <select id="s-sel" class="w-full mt-1 p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium focus:ring-2 focus:ring-cyan-500 outline-none">
@@ -45,6 +48,7 @@
         </select>
       </div>
 
+      <!-- Chapter Selector -->
       <div>
         <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Select Chapter Target</label>
         <select id="ch-sel" class="w-full mt-1 p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm font-medium focus:ring-2 focus:ring-cyan-500 outline-none"></select>
@@ -65,6 +69,13 @@
   </footer>
 
   <script>
+    // 📚 MASTER BACKUP LIST FOR CLASS 12 CHAPTERS IF THEY ARE MISSING IN NOTES
+    const class12MasterChapters = {
+      "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"],
+      "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature of Radiation", "Atoms", "Nuclei", "Semiconductor Electronics"],
+      "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d and f Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols and Ethers", "Aldehydes Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
+    };
+
     function syncPracticeDropdowns() {
       const classSelect = document.getElementById('c-sel');
       const subjectSelect = document.getElementById('s-sel');
@@ -74,10 +85,20 @@
       const selectedSubject = subjectSelect.value;
       
       chSelect.innerHTML = '';
-      
+      let chapters = [];
+
+      // 1. Try to load from your syllabus-notes.js file database
       if (window.notesDatabase && window.notesDatabase[selectedClass] && window.notesDatabase[selectedClass][selectedSubject]) {
-        const chapters = Object.keys(window.notesDatabase[selectedClass][selectedSubject]);
-        
+        chapters = Object.keys(window.notesDatabase[selectedClass][selectedSubject]);
+      }
+
+      // 2. If it's Class 12 and chapters are empty or missing, use the Master Backup List
+      if (selectedClass === "Class 12" && chapters.length <= 1) {
+        chapters = class12MasterChapters[selectedSubject] || [];
+      }
+
+      // 3. Populate dropdown menu options
+      if (chapters.length > 0) {
         chapters.forEach(ch => {
           chSelect.innerHTML += `<option value="${ch}">${ch}</option>`;
         });
@@ -86,17 +107,15 @@
       }
     }
 
-    // 🔒 SECURITIES UPGRADE FIXED ROUTING FUNCTION
     function go() {
       const selectedClass = document.getElementById('c-sel').value;
       const selectedSubject = document.getElementById('s-sel').value;
       const selectedChapter = document.getElementById('ch-sel').value;
       
-      if (selectedChapter.includes("No chapters found")) {
-        return alert("Please select a valid chapter with active quiz contents.");
+      if (!selectedChapter || selectedChapter.includes("No chapters found")) {
+        return alert("Please select a valid chapter.");
       }
 
-      // Safely packets up ALL selection values before launching quiz
       sessionStorage.setItem('quiz_class', selectedClass);
       sessionStorage.setItem('quiz_subject', selectedSubject);
       sessionStorage.setItem('quiz_chapter', selectedChapter);
@@ -110,4 +129,5 @@
     syncPracticeDropdowns();
   </script>
 </body>
-</html>
+        </html>
+  
