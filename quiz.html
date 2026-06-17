@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Engine - Study Verse</title>
-  <!-- Tailwind CSS Framework -->
+  <title>Infinite Auto-Generation Quiz Room</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
   
-  <!-- 📱 LINK TO YOUR MASTER QUESTION BANK DATA FILE -->
+  <script src="syllabus-notes.js"></script>
   <script src="syllabus-questions.js"></script>
 
   <style>
@@ -20,183 +19,187 @@
 </head>
 <body class="min-h-screen text-white flex flex-col justify-between">
 
-  <!-- Top Navigation Header -->
   <header class="bg-slate-900/60 backdrop-blur-md p-4 text-center border-b border-white/10 flex justify-between items-center px-6">
-    <a href="practice.html" class="text-xs font-bold text-slate-400 hover:text-cyan-400 transition">◀ Exit</a>
+    <a href="practice.html" class="text-xs font-bold text-slate-400 hover:text-cyan-400">◀ Exit</a>
     <div>
-      <h1 id="quiz-heading" class="font-bold text-lg text-cyan-400">Loading Quiz...</h1>
-      <p id="quiz-subheading" class="text-xxs text-slate-400 tracking-wide uppercase mt-0.5">Practice Session</p>
+      <h1 id="quiz-heading" class="font-bold text-lg text-cyan-400">Processing Factory...</h1>
+      <p id="quiz-subheading" class="text-xs text-emerald-400 tracking-wider uppercase font-bold">Infinite Blueprint Mode</p>
     </div>
-    <div class="w-8"></div> <!-- Empty spacer for balance -->
+    <div class="w-8"></div>
   </header>
 
-  <!-- Interactive Quiz Card Container -->
   <main class="max-w-md w-full mx-auto p-4 my-auto">
-    
-    <!-- Progress Indicator -->
     <div class="flex justify-between items-center mb-2 px-1 text-xs text-slate-400">
-      <span id="question-counter">Question 0 of 0</span>
-      <span id="score-counter" class="text-emerald-400 font-bold">Score: 0</span>
+      <span id="question-counter">Questions Solved: 0</span>
+      <span id="blueprint-tag" class="text-amber-400 font-mono text-xxs bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">Blueprint</span>
     </div>
 
-    <div class="bg-slate-900/90 border border-white/10 p-6 rounded-3xl shadow-2xl space-y-5 backdrop-blur-xl">
-      
-      <!-- Target Question Display Area -->
+    <div class="bg-slate-900/90 border border-white/10 p-6 rounded-3xl shadow-2xl space-y-5">
       <div class="space-y-2">
         <h2 id="question-text" class="text-base font-bold text-slate-100 leading-relaxed">
-          Retrieving your practice set data questions...
+          Generating automatic variables...
         </h2>
       </div>
 
-      <!-- Option Action Buttons Group -->
-      <div id="options-container" class="space-y-2.5">
-        <!-- Generated dynamically via JavaScript -->
-      </div>
+      <div id="options-container" class="space-y-2.5"></div>
       
-      <!-- Control Buttons Footer -->
-      <div class="pt-2 flex space-x-3">
-        <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/10">
-          Next Question ➡️
+      <div class="pt-2">
+        <button id="next-btn" onclick="generateNextDynamicQuestion()" class="hidden w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 font-bold py-2.5 rounded-xl transition shadow-lg shadow-cyan-500/20 text-sm">
+          Next Auto-Generated Question ➡️
         </button>
       </div>
-
     </div>
   </main>
 
-  <!-- Global Results Dashboard Card (Hidden by default) -->
-  <div id="results-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-white/10 max-w-sm w-full p-6 rounded-3xl text-center space-y-4 shadow-2xl">
-      <h2 class="text-2xl font-bold text-yellow-400">🎉 Quiz Completed!</h2>
-      <p class="text-slate-300 text-sm">You have finished the evaluation sequence for this chapter.</p>
-      
-      <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-bold">Your Total Score</p>
-        <p id="final-score" class="text-4xl font-bold text-cyan-400 mt-1">0 / 0</p>
-      </div>
-
-      <div class="space-y-2 pt-2">
-        <button onclick="window.location.reload()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 rounded-xl transition">
-          🔄 Retake This Quiz
-        </button>
-        <a href="practice.html" class="block w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl transition text-sm">
-          Select Another Chapter
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer Brand Signature -->
   <footer class="bg-black/40 p-4 text-center text-xs text-slate-600 border-t border-white/5">
-    <p class="font-bold">Engine System Built by Pathak Rohit</p>
+    <p class="font-bold">Ecosystem Powered by Pathak Rohit</p>
   </footer>
 
-  <!-- ⚙️ CORE INTERACTIVE CONTROL SCRIPT -->
   <script>
-    // Extract setup data from Session memory storage pipes
-    const targetSubject = sessionStorage.getItem('quiz_subject') || "Physics";
-    const targetChapter = sessionStorage.getItem('quiz_chapter') || "Electric Charges and Fields";
+    // Pull current tracking configuration from local application memory storage
+    const targetClass = sessionStorage.getItem('quiz_class') || "Class 12";
+    const targetSubject = sessionStorage.getItem('quiz_subject') || "Mathematics";
+    const targetChapter = sessionStorage.getItem('quiz_chapter') || "Vector Algebra";
 
-    // Set UI labels based on selections
+    // Synchronize current page top header values text labels
     document.getElementById('quiz-heading').innerText = targetChapter;
-    document.getElementById('quiz-subheading').innerText = targetSubject;
+    document.getElementById('quiz-subheading').innerText = `${targetClass} • ${targetSubject}`;
 
-    // Pull active question arrays out of your window file: syllabus-questions.js
-    let questionsPool = [];
-    if (window.masterQuestionBank && window.masterQuestionBank[targetChapter]) {
-      questionsPool = window.masterQuestionBank[targetChapter];
-    } else {
-      // Fallback message if a user taps a chapter you haven't written questions for yet
-      questionsPool = [
-        {
-          q: `🚧 No questions uploaded for "${targetChapter}" yet! Open your syllabus-questions.js file on your phone to add them.`,
-          o: ["Return to Practice Selection Setup"],
-          c: 0,
-          isFallback: true
-        }
-      ];
-    }
+    // Master Dictionary holding your 50 blueprints patterns arrays per chapter
+    const blueprintMasterList = {
+      "Differential Equations": [
+        "Differential equation identification", "Order of differential equation", "Degree of differential equation", 
+        "Variable separable equation", "Homogeneous equation", "Linear differential equation", "General solution", 
+        "Particular solution", "Initial value problem", "Formation of differential equation", "Solution verification", 
+        "Family of curves", "Growth model", "Decay model", "Population model", "Physical application", "Rate relation", 
+        "Equation comparison", "Parameter finding", "Function modelling", "Numerical substitution", "Assertion reason", 
+        "Case study", "MCQ conceptual", "MCQ numerical", "Statement correctness", "Logical reasoning", "Error analysis", 
+        "Problem solving", "Analytical thinking", "Graph interpretation", "Real life application", "Scientific application", 
+        "Engineering application", "Data interpretation", "Equation correction", "Solution comparison", "Transformation question", 
+        "Proof based", "Advanced differential equation", "Result verification", "Pattern recognition", "Equation prediction", 
+        "Model comparison", "Analytical modelling", "Advanced numerical", "Function analysis", "Solution prediction", 
+        "Reasoning based", "Mixed concept"
+      ],
+      "Vector Algebra": [
+        "Vector identification", "Magnitude calculation", "Unit vector", "Position vector", "Vector addition", 
+        "Vector subtraction", "Scalar multiplication", "Dot product", "Cross product", "Angle between vectors", 
+        "Projection of vector", "Direction cosine", "Direction ratio", "Collinearity check", "Coplanarity check", 
+        "Vector equation", "Resultant vector", "Component form", "Geometrical interpretation", "Vector comparison", 
+        "Numerical substitution", "Assertion reason", "Case study", "MCQ conceptual", "MCQ numerical", "Statement correctness", 
+        "Logical reasoning", "Error analysis", "Problem solving", "Analytical thinking", "Graph interpretation", 
+        "Real life application", "Physics application", "Engineering application", "Data interpretation", "Parameter finding", 
+        "Proof based", "Vector correction", "Transformation question", "Advanced vector", "Result verification", 
+        "Pattern recognition", "Direction prediction", "Magnitude comparison", "Analytical modelling", "Advanced numerical", 
+        "Coordinate application", "Space analysis", "Reasoning based", "Mixed concept"
+      ],
+      "Three Dimensional Geometry": [
+        "Direction cosine", "Direction ratio", "Line equation", "Cartesian equation", "Vector equation", 
+        "Distance between points", "Distance from point to plane", "Distance between lines", "Angle between lines", 
+        "Angle between planes", "Plane equation", "Coplanarity condition", "Skew lines", "Shortest distance", 
+        "Intersection analysis", "Coordinate geometry application", "Space interpretation", "Line comparison", 
+        "Plane comparison", "Parameter finding", "Numerical substitution", "Assertion reason", "Case study", 
+        "MCQ conceptual", "MCQ numerical", "Statement correctness", "Logical reasoning", "Error analysis", 
+        "Problem solving", "Analytical thinking", "Graph interpretation", "Real life application", "Engineering application", 
+        "Data interpretation", "Proof based", "Coordinate correction", "Transformation question", "Advanced geometry", 
+        "Result verification", "Pattern recognition", "Distance comparison", "Angle comparison", "Analytical modelling", 
+        "Advanced numerical", "Space modelling", "Coordinate analysis", "Equation correction", "Position prediction", 
+        "Reasoning based", "Mixed concept"
+      ],
+      "Linear Programming": [
+        "Objective function", "Constraint identification", "Feasible region", "Optimal solution", "Maximization problem", 
+        "Minimization problem", "Graphical method", "Corner point method", "Constraint comparison", "Feasible solution", 
+        "Infeasible solution", "Bounded region", "Unbounded region", "Resource allocation", "Profit maximization", 
+        "Cost minimization", "Production planning", "Business application", "Economic application", "Graph interpretation", 
+        "Numerical substitution", "Assertion reason", "Case study", "MCQ conceptual", "MCQ numerical", "Statement correctness", 
+        "Logical reasoning", "Error analysis", "Problem solving", "Analytical thinking", "Real life application", 
+        "Data interpretation", "Parameter finding", "Graph matching", "Constraint correction", "Optimization comparison", 
+        "Transformation question", "Advanced optimization", "Result verification", "Pattern recognition", "Decision making", 
+        "Management application", "Industrial application", "Analytical modelling", "Advanced numerical", "Profit analysis", 
+        "Cost analysis", "Graph prediction", "Reasoning based", "Mixed concept"
+      ],
+      "Probability": [
+        "Conditional probability", "Bayes theorem", "Independent events", "Dependent events", "Multiplication theorem", 
+        "Addition theorem", "Random variable", "Probability distribution", "Mean calculation", "Variance calculation", 
+        "Binomial distribution", "Event comparison", "Outcome prediction", "Sample space analysis", "Probability modelling", 
+        "Risk analysis", "Decision making", "Data interpretation", "Statistical application", "Event verification", 
+        "Numerical substitution", "Assertion reason", "Case study", "MCQ conceptual", "MCQ numerical", "Statement correctness", 
+        "Logical reasoning", "Error analysis", "Problem solving", "Analytical thinking", "Real life application", 
+        "Graph interpretation", "Parameter finding", "Probability correction", "Outcome comparison", "Theoretical probability", 
+        "Experimental probability", "Advanced counting", "Permutation connection", "Combination connection", "Advanced probability", 
+        "Result verification", "Pattern recognition", "Prediction analysis", "Analytical modelling", "Advanced numerical", 
+        "Event ranking", "Probability comparison", "Reasoning based", "Mixed concept"
+      ]
+    };
 
-    let currentIndex = 0;
-    let runningScore = 0;
-    let hasAnsweredCurrent = false;
+    // Safely check if the target chapter exists in our blueprint registry database pool
+    let activeBlueprintList = blueprintMasterList[targetChapter] || ["MCQ conceptual"];
+    let currentQuestionCount = 1;
+    let activeQuestionObj = null;
+    let hasAnswered = false;
 
-    function renderActiveQuestion() {
-      hasAnsweredCurrent = false;
+    function generateNextDynamicQuestion() {
+      hasAnswered = false;
       document.getElementById('next-btn').classList.add('hidden');
+      document.getElementById('question-counter').innerText = `Questions Solved: ${currentQuestionCount - 1}`;
       
-      const currentQuestion = questionsPool[currentIndex];
+      // 🎲 Select 1 blueprint item type entry from your array structure at random
+      const randomBlueprint = activeBlueprintList[Math.floor(Math.random() * activeBlueprintList.length)];
+      document.getElementById('blueprint-tag').innerText = `Type: ${randomBlueprint}`;
+
+      // 🏭 Pass parameter variables down into your global external factory engine script
+      if (window.generateBlueprintQuestion) {
+        activeQuestionObj = window.generateBlueprintQuestion(targetClass, targetSubject, targetChapter, randomBlueprint);
+      } else {
+        activeQuestionObj = {
+          q: "⚠️ Link Error: Could not discover window.generateBlueprintQuestion function hook loop inside your syllabus-questions.js script file assets.",
+          o: ["Check File Configurations"],
+          c: 0
+        };
+      }
       
-      // Update counters display layout
-      document.getElementById('question-counter').innerText = `Question ${currentIndex + 1} of ${questionsPool.length}`;
-      document.getElementById('score-counter').innerText = `Score: ${runningScore}`;
-      document.getElementById('question-text').innerText = currentQuestion.q;
+      // Render layout update text strings out into view windows container elements
+      document.getElementById('question-text').innerText = activeQuestionObj.q;
       
-      // Clear out the old selection items buttons container loop
-      const optionsContainer = document.getElementById('options-container');
-      optionsContainer.innerHTML = '';
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
       
-      // Inject options array buttons list layout
-      currentQuestion.o.forEach((option, index) => {
+      activeQuestionObj.o.forEach((option, index) => {
         const btn = document.createElement('button');
-        btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 font-medium transition hover:bg-slate-800 active:scale-98 outline-none text-sm duration-150 flex justify-between items-center";
+        btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 text-sm transition hover:bg-slate-800 active:scale-98 outline-none duration-150 flex justify-between items-center";
         btn.innerText = option;
-        
-        // Handle tapping mechanics safely on phone touches
-        btn.onclick = () => selectOption(index, btn);
-        optionsContainer.appendChild(btn);
+        btn.onclick = () => evaluateChoice(index, btn);
+        container.appendChild(btn);
       });
     }
 
-    function selectOption(selectedIndex, clickedButton) {
-      if (hasAnsweredCurrent) return; // Freeze clicks once an option is picked
+    function evaluateChoice(selectedIdx, element) {
+      if (hasAnswered) return;
+      hasAnswered = true;
       
-      const currentQuestion = questionsPool[currentIndex];
-      
-      // Handle the safety redirect button if it's an empty fallback slide
-      if (currentQuestion.isFallback) {
-        window.location.href = "practice.html";
-        return;
-      }
+      const buttons = document.getElementById('options-container').children;
+      const correctIdx = activeQuestionObj.c;
 
-      hasAnsweredCurrent = true;
-      const optionsButtons = document.getElementById('options-container').children;
-      const correctIndex = currentQuestion.c;
-
-      if (selectedIndex === correctIndex) {
-        // Correct answer selected -> Paint it Emerald Green
-        clickedButton.classList.remove('bg-slate-800/60', 'border-slate-700');
-        clickedButton.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold');
-        clickedButton.innerHTML += ` <span class="text-emerald-400 font-bold">✓ Correct</span>`;
-        runningScore++;
-        document.getElementById('score-counter').innerText = `Score: ${runningScore}`;
+      if (selectedIdx === correctIdx) {
+        element.classList.remove('bg-slate-800/60', 'border-slate-700');
+        element.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold');
+        element.innerHTML += ` <span class="text-emerald-400 font-bold">✓ Correct</span>`;
       } else {
-        // Wrong answer selected -> Paint it Red and highlight the correct choice in Green
-        clickedButton.classList.remove('bg-slate-800/60', 'border-slate-700');
-        clickedButton.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-300');
-        clickedButton.innerHTML += ` <span class="text-rose-400 font-bold">✗ Incorrect</span>`;
+        element.classList.remove('bg-slate-800/60', 'border-slate-700');
+        element.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-300');
+        element.innerHTML += ` <span class="text-rose-400 font-bold">✗ Incorrect</span>`;
         
-        const correctButton = optionsButtons[correctIndex];
-        correctButton.classList.remove('bg-slate-800/60', 'border-slate-700');
-        correctButton.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold');
+        // Highlight correct response choice
+        buttons[correctIdx].classList.remove('bg-slate-800/60', 'border-slate-700');
+        buttons[correctIdx].classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300', 'font-bold');
       }
 
-      // Unhide tracking controller forward progression button execution trigger element
+      currentQuestionCount++;
       document.getElementById('next-btn').classList.remove('hidden');
     }
 
-    function nextQuestion() {
-      if (currentIndex + 1 < questionsPool.length) {
-        currentIndex++;
-        renderActiveQuestion();
-      } else {
-        // Reach terminal boundary state -> Unveil modal panel
-        document.getElementById('final-score').innerText = `${runningScore} / ${questionsPool.length}`;
-        document.getElementById('results-modal').classList.remove('hidden');
-      }
-    }
-
-    // Initialize execution right out of the structural gateway container frame link
-    renderActiveQuestion();
+    // Initialize execution script sequence routine when page loads on device interface screens
+    generateNextDynamicQuestion();
   </script>
 </body>
-</html>
+      </html>
+  
