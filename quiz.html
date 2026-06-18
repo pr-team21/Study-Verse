@@ -103,12 +103,7 @@
 
       // Pre-flight validation check
       if (KEY_PART_1 === "PASTE_FIRST_HALF_HERE" || KEY_PART_2 === "PASTE_SECOND_HALF_HERE") {
-        showMobileError("Setup Incomplete", "Please paste your split key pieces into line 63 and 64.");
-        return;
-      }
-
-      if (!GEMINI_API_KEY.startsWith("AIza")) {
-        showMobileError("Key Format Error", "The combined key pieces do not start with 'AIza'. Make sure you copied the original key correctly from Google AI Studio.");
+        showMobileError("Setup Incomplete", "Please open your quiz.html file and split your original API key into KEY_PART_1 and KEY_PART_2.");
         return;
       }
 
@@ -127,7 +122,7 @@
           const statusCode = response.status;
           
           if (statusCode === 400) {
-            showMobileError(`API Error (${statusCode})`, "Google rejected this key. It might have been leaked or blocked previously. Go create a completely fresh key in AI Studio.");
+            showMobileError(`API Error (${statusCode})`, "Google rejected this key. Make sure it matches your AI Studio screen key perfectly and has no extra spaces.");
           } else if (statusCode === 429) {
             showMobileError(`API Error (${statusCode})`, "Rate limit reached. Wait 10 seconds and tap retry.");
           } else {
@@ -239,5 +234,5 @@
     }
   </script>
 </body>
-          </html>
-  
+        </html>
+          
