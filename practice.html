@@ -3,131 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Practice Room - Study Verse</title>
+  <title>Study Verse - Control Center</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-  
-  <!-- Link to your notes database -->
-  <script src="syllabus-notes.js"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
   <style>
-    body { 
-      font-family: 'Quicksand', sans-serif; 
-      background: linear-gradient(135deg, #111827 0%, #312e81 100%); 
-    }
+    body { font-family: 'Quicksand', sans-serif; background-color: #0f172a; }
   </style>
 </head>
 <body class="min-h-screen text-white flex flex-col justify-between">
-  
-  <header class="bg-white/5 backdrop-blur-md p-4 text-center border-b border-white/10">
-    <h1 class="font-bold text-3xl text-cyan-400">🌌 STUDY VERSE</h1>
-    <p class="text-xs italic mt-1 text-purple-300">"Practice makes perfect."</p>
+
+  <header class="bg-slate-900 p-5 border-b border-white/10 text-center shadow-lg">
+    <h1 class="text-xl font-bold tracking-wide text-cyan-400">STUDY VERSE</h1>
+    <p class="text-[11px] text-slate-400 uppercase tracking-widest mt-1 font-bold">Academic Portal Lab</p>
   </header>
 
-  <main class="max-w-md w-full mx-auto p-4 my-auto">
-    <div class="bg-slate-900/80 border border-white/10 text-white p-6 rounded-3xl shadow-2xl space-y-4 backdrop-blur-lg">
-      <h2 class="font-bold text-xl text-center text-cyan-300">🎯 Quiz Configuration Room</h2>
+  <main class="flex-grow w-full max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+    
+    <div class="bg-slate-900/60 border border-white/5 rounded-2xl p-4 sm:p-6 space-y-4 shadow-xl backdrop-blur-md">
       
-      <!-- Class Selector -->
       <div>
-        <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Select Your Class</label>
-        <select id="c-sel" class="w-full mt-1 p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium focus:ring-2 focus:ring-cyan-500 outline-none">
-          <option value="Class 10">Class 10</option>
-          <option value="Class 11">Class 11</option>
-          <option value="Class 12">Class 12</option>
-        </select>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">1. Select Standard</label>
+        <div class="grid grid-cols-4 gap-2" id="class-track">
+          <button onclick="setClass('Class 9')" id="btn-Class 9" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Class 9</button>
+          <button onclick="setClass('Class 10')" id="btn-Class 10" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Class 10</button>
+          <button onclick="setClass('Class 11')" id="btn-Class 11" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Class 11</button>
+          <button onclick="setClass('Class 12')" id="btn-Class 12" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Class 12</button>
+        </div>
       </div>
 
-      <!-- Subject Selector -->
       <div>
-        <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Select Subject</label>
-        <select id="s-sel" class="w-full mt-1 p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium focus:ring-2 focus:ring-cyan-500 outline-none">
-          <option value="Physics">Physics</option>
-          <option value="Chemistry">Chemistry</option>
-          <option value="Mathematics">Mathematics</option>
-        </select>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">2. Select Subject Domain</label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="subject-track">
+          <button onclick="setSubject('Mathematics')" id="btn-Mathematics" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Mathematics</button>
+          <button onclick="setSubject('Physics')" id="btn-Physics" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Physics</button>
+          <button onclick="setSubject('Chemistry')" id="btn-Chemistry" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Chemistry</button>
+          <button onclick="setSubject('Biology')" id="btn-Biology" class="py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-300 transition-all active:scale-95">Biology</button>
+        </div>
       </div>
 
-      <!-- Chapter Selector -->
-      <div>
-        <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Select Chapter Target</label>
-        <select id="ch-sel" class="w-full mt-1 p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm font-medium focus:ring-2 focus:ring-cyan-500 outline-none"></select>
-      </div>
-      
-      <button onclick="go()" class="w-full mt-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-3 rounded-xl transition transform active:scale-95 shadow-lg shadow-cyan-500/20">
-        🚀 Launch Practice Quiz
-      </button>
-
-      <a href="dashboard.html" class="block text-center text-xs font-bold text-slate-500 hover:text-slate-300 transition mt-2">
-        Back to Dashboard
-      </a>
     </div>
+
+    <div class="space-y-3">
+      <div class="flex justify-between items-center px-2">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">3. Available Practice Chapters</h3>
+        <span id="target-summary-badge" class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-bold">Class 12 • Mathematics</span>
+      </div>
+
+      <div id="chapters-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        </div>
+    </div>
+
   </main>
 
-  <footer class="bg-black/40 p-4 text-center text-xs text-slate-500 border-t border-white/5">
-    <p class="font-bold tracking-wide">Made By Pathak Rohit</p>
+  <footer class="bg-slate-950 p-4 text-center text-[11px] text-slate-600 border-t border-white/5 font-bold">
+    Study Verse Core Operations Hub • Rohit Pathak
   </footer>
 
   <script>
-    // 📚 MASTER BACKUP LIST FOR CLASS 12 CHAPTERS IF THEY ARE MISSING IN NOTES
-    const class12MasterChapters = {
-      "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"],
-      "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature of Radiation", "Atoms", "Nuclei", "Semiconductor Electronics"],
-      "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d and f Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols and Ethers", "Aldehydes Ketones and Carboxylic Acids", "Amines", "Biomolecules"]
+    const ACADEMIC_DATABASE = {
+      "Class 9": {
+        "Mathematics": ["Number Systems", "Polynomials", "Coordinate Geometry", "Linear Equations in Two Variables", "Introduction to Euclid's Geometry", "Lines and Angles", "Triangles", "Quadrilaterals", "Circles", "Heron's Formula", "Surface Areas and Volumes", "Statistics"],
+        "Physics": ["Motion", "Force and Laws of Motion", "Gravitation", "Work and Energy", "Sound"],
+        "Chemistry": ["Matter in Our Surroundings", "Is Matter Around Us Pure", "Atoms and Molecules", "Structure of the Atom"],
+        "Biology": ["The Fundamental Unit of Life", "Tissues", "Improvement in Food Resources"]
+      },
+      "Class 10": {
+        "Mathematics": ["Real Numbers", "Polynomials", "Pair of Linear Equations in Two Variables", "Quadratic Equations", "Arithmetic Progressions", "Triangles", "Coordinate Geometry", "Introduction to Trigonometry", "Some Applications of Trigonometry", "Circles", "Areas Related to Circles", "Surface Areas and Volumes", "Statistics", "Probability"],
+        "Physics": ["Light - Reflection and Refraction", "The Human Eye and the Colorful World", "Electricity", "Magnetic Effects of Electric Current"],
+        "Chemistry": ["Chemical Reactions and Equations", "Acids, Bases and Salts", "Metals and Non-metals", "Carbon and its Compounds"],
+        "Biology": ["Life Processes", "Control and Coordination", "How do Organisms Reproduce?", "Heredity and Evolution", "Our Environment"]
+      },
+      "Class 11": {
+        "Mathematics": ["Sets", "Relations and Functions", "Trigonometric Functions", "Complex Numbers and Quadratic Equations", "Linear Inequalities", "Permutations and Combinations", "Binomial Theorem", "Sequences and Series", "Straight Lines", "Conic Sections", "Introduction to Three Dimensional Geometry", "Limits and Derivatives", "Statistics", "Probability"],
+        "Physics": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles and Rotational Motion", "Gravitation", "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves"],
+        "Chemistry": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements and Periodicity in Properties", "Chemical Bonding and Molecular Structure", "Thermodynamics", "Equilibrium", "Redox Reactions", "Organic Chemistry - Some Basic Principles & Techniques", "Hydrocarbons"],
+        "Biology": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Anatomy of Flowering Plants", "Structural Organisation in Animals", "Cell: The Unit of Life", "Biomolecules", "Cell Cycle and Cell Division", "Photosynthesis in Higher Plants", "Respiration in Plants", "Plant Growth and Development", "Breathing and Exchange of Gases", "Body Fluids and Circulation", "Excretory Products and their Elimination", "Locomotion and Movement", "Neural Control and Coordination", "Chemical Coordination and Integration"]
+      },
+      "Class 12": {
+        "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Application of Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"],
+        "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"],
+        "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f- Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"],
+        "Biology": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance and Variation", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Microbes in Human Welfare", "Biotechnology: Principles and Processes", "Biotechnology and its Applications", "Organisms and Populations", "Ecosystem", "Biodiversity and Conservation"]
+      }
     };
 
-    function syncPracticeDropdowns() {
-      const classSelect = document.getElementById('c-sel');
-      const subjectSelect = document.getElementById('s-sel');
-      const chSelect = document.getElementById('ch-sel');
-      
-      const selectedClass = classSelect.value;
-      const selectedSubject = subjectSelect.value;
-      
-      chSelect.innerHTML = '';
-      let chapters = [];
+    // Initialize application default configuration states
+    let activeClass = sessionStorage.getItem('quiz_class') || "Class 12";
+    let activeSubject = sessionStorage.getItem('quiz_subject') || "Mathematics";
 
-      // 1. Try to load from your syllabus-notes.js file database
-      if (window.notesDatabase && window.notesDatabase[selectedClass] && window.notesDatabase[selectedClass][selectedSubject]) {
-        chapters = Object.keys(window.notesDatabase[selectedClass][selectedSubject]);
-      }
-
-      // 2. If it's Class 12 and chapters are empty or missing, use the Master Backup List
-      if (selectedClass === "Class 12" && chapters.length <= 1) {
-        chapters = class12MasterChapters[selectedSubject] || [];
-      }
-
-      // 3. Populate dropdown menu options
-      if (chapters.length > 0) {
-        chapters.forEach(ch => {
-          chSelect.innerHTML += `<option value="${ch}">${ch}</option>`;
-        });
-      } else {
-        chSelect.innerHTML = `<option>⚠️ No chapters found</option>`;
-      }
+    function setClass(className) {
+      activeClass = className;
+      sessionStorage.setItem('quiz_class', className);
+      renderUI();
     }
 
-    function go() {
-      const selectedClass = document.getElementById('c-sel').value;
-      const selectedSubject = document.getElementById('s-sel').value;
-      const selectedChapter = document.getElementById('ch-sel').value;
-      
-      if (!selectedChapter || selectedChapter.includes("No chapters found")) {
-        return alert("Please select a valid chapter.");
-      }
-
-      sessionStorage.setItem('quiz_class', selectedClass);
-      sessionStorage.setItem('quiz_subject', selectedSubject);
-      sessionStorage.setItem('quiz_chapter', selectedChapter);
-      
-      window.location.href = 'quiz.html';
+    function setSubject(subjectName) {
+      activeSubject = subjectName;
+      sessionStorage.setItem('quiz_subject', subjectName);
+      renderUI();
     }
 
-    document.getElementById('c-sel').addEventListener('change', syncPracticeDropdowns);
-    document.getElementById('s-sel').addEventListener('change', syncPracticeDropdowns);
+    function startQuizRoom(chapterName) {
+      sessionStorage.setItem('quiz_chapter', chapterName);
+      window.location.href = "quiz.html";
+    }
 
-    syncPracticeDropdowns();
+    /**
+     * Re-renders selectors and updates active button highlights dynamically
+     */
+    function renderUI() {
+      // Reset layout classes on all filters
+      ["Class 9", "Class 10", "Class 11", "Class 12"].forEach(c => {
+        document.getElementById(`btn-${c}`).className = "py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-400 transition-all";
+      });
+      ["Mathematics", "Physics", "Chemistry", "Biology"].forEach(s => {
+        document.getElementById(`btn-${s}`).className = "py-2.5 rounded-xl border border-white/10 bg-slate-800 text-xs font-bold text-slate-400 transition-all";
+      });
+
+      // Highlight active filter states
+      document.getElementById(`btn-${activeClass}`).className = "py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 text-xs font-bold transition-all shadow-md shadow-cyan-500/5";
+      document.getElementById(`btn-${activeSubject}`).className = "py-2.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 text-xs font-bold transition-all shadow-md shadow-cyan-500/5";
+
+      // Sync informational top display badge
+      document.getElementById('target-summary-badge').innerText = `${activeClass} • ${activeSubject}`;
+
+      // Rebuild the dynamic lists
+      const chaptersList = ACADEMIC_DATABASE[activeClass]?.[activeSubject] || [];
+      const listContainer = document.getElementById('chapters-list-container');
+      listContainer.innerHTML = "";
+
+      chaptersList.forEach((chapter, index) => {
+        const row = document.createElement('button');
+        row.onclick = () => startQuizRoom(chapter);
+        row.className = "w-full text-left p-4 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/70 transition-all duration-150 transform active:scale-[0.99] flex justify-between items-center group";
+        row.innerHTML = `
+          <div class="flex items-center space-x-3 pr-2">
+            <span class="w-6 h-6 flex items-center justify-center rounded-lg bg-slate-950 font-bold text-slate-500 text-[10px] border border-white/5">${index + 1}</span>
+            <span class="text-xs sm:text-sm text-slate-200 font-medium group-hover:text-cyan-400 transition-colors truncate max-w-[220px] sm:max-w-xs">${chapter}</span>
+          </div>
+          <span class="text-xs font-bold text-cyan-500/50 group-hover:text-cyan-400 transition-colors pl-2 shrink-0">Enter ➔</span>
+        `;
+        listContainer.appendChild(row);
+      });
+    }
+
+    // Trigger on boot setup execution
+    renderUI();
   </script>
 </body>
-        </html>
-  
+            </html>
+      
