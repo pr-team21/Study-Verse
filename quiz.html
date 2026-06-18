@@ -27,13 +27,18 @@
     
     <div id="loading-card" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-8 text-center shadow-xl space-y-4">
       <div id="spinner-element" class="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto"></div>
-      <p id="loading-text" class="text-slate-400 font-bold text-sm mt-4 animate-pulse">Gemini AI is building a unique practice question...</p>
+      <p id="loading-text" class="text-slate-400 font-bold text-sm mt-4 animate-pulse">Gemini AI is building your initial setup room...</p>
     </div>
 
     <div id="quiz-card" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-6 shadow-xl space-y-6 hidden">
       
       <div class="space-y-2">
-        <div class="inline-block text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-bold">MULTIPLE CHOICE</div>
+        <div class="flex justify-between items-center">
+          <div class="inline-block text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-bold">MULTIPLE CHOICE</div>
+          <span id="preload-status" class="text-[9px] text-slate-500 font-bold flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Buffered
+          </span>
+        </div>
         <p id="question-text" class="text-base sm:text-lg font-bold leading-relaxed text-slate-100">
           </p>
       </div>
@@ -48,7 +53,7 @@
       </div>
 
       <div class="pt-2 border-t border-white/5 flex justify-end">
-        <button id="next-btn" onclick="fetchAIQuestion()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs sm:text-sm font-bold px-6 py-2.5 rounded-xl shadow-lg transition-all transform active:scale-95 hidden">
+        <button id="next-btn" onclick="handleNextClick()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs sm:text-sm font-bold px-6 py-2.5 rounded-xl shadow-lg transition-all transform active:scale-95 hidden">
           Next AI Question ➔
         </button>
       </div>
@@ -63,113 +68,159 @@
 
   <script>
     // 🔒 SPLIT KEY CONFIGURATION
-    // Cut your original Gemini key in half and paste the pieces below!
     const KEY_PART_1 = "AQ.Ab8RN6If2HxXudFByncCO7";
     const KEY_PART_2 = "-1yBGg1AZYjNLzM0wuaolMhGcfLg";
 
-    // Combines the parts automatically in your phone's memory
     const GEMINI_API_KEY = KEY_PART_1.trim() + KEY_PART_2.trim();
 
-    // Grab session metadata passed from your practice.html selections
+    // Grab session metadata
     const selectedClass = sessionStorage.getItem('quiz_class') || "Class 12";
     const selectedSubject = sessionStorage.getItem('quiz_subject') || "Physics";
     const selectedChapter = sessionStorage.getItem('quiz_chapter') || "Electrostatics";
 
-    // Global state counters
+    // App State Counters
     let globalScore = 0;
     let currentCorrectIndex = null;
     let hasAnswered = false;
 
-    // Initialize layout text strings
+    // ⚡ PRE-FETCH STORAGE POOLS
+    let currentQuestionData = null;
+    let nextQuestionData = null;
+    let isFetchingNext = false;
+
+    // Initialize layout texts
     document.getElementById('meta-info').innerText = `${selectedClass} • ${selectedSubject}`;
     document.getElementById('chapter-title').innerText = selectedChapter;
 
     /**
-     * Connects directly to Google API Endpoint with built-in mobile visual debugging
+     * Core function responsible for making the structural network handshake
      */
-    async function fetchAIQuestion() {
-      // Reset interface to loading state
-      document.getElementById('loading-card').classList.remove('hidden');
-      document.getElementById('quiz-card').classList.add('hidden');
-      document.getElementById('explanation-box').classList.add('hidden');
-      document.getElementById('next-btn').classList.add('hidden');
-      hasAnswered = false;
+    async function requestQuestionFromAI() {
+      const promptText = `You are an academic server. Target Audience: ${selectedClass}, Subject: ${selectedSubject}, Chapter: ${selectedChapter}. Generate exactly ONE multiple-choice question relevant to this syllabus standard. You must respond ONLY with a valid JSON object matching this syntax: {"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0, "explanation": "..."}. Do not use markdown code blocks. Do not add explanations outside the JSON object.`;
 
-      // Reset loading content
-      document.getElementById('loading-card').innerHTML = `
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto"></div>
-        <p class="text-slate-400 font-bold text-sm mt-4 animate-pulse">Gemini AI is building a unique practice question...</p>
-      `;
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+      });
 
-      // Pre-flight validation check
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      let textResponse = data.candidates[0].content.parts[0].text.trim();
+      textResponse = textResponse.replace(/^```json/i, "").replace(/^```/, "").replace(/```$/, "").trim();
+      
+      return JSON.parse(textResponse);
+    }
+
+    /**
+     * Initial startup sequence launcher
+     */
+    async function initialBoot() {
       if (KEY_PART_1 === "PASTE_FIRST_HALF_HERE" || KEY_PART_2 === "PASTE_SECOND_HALF_HERE") {
         showMobileError("Setup Incomplete", "Please open your quiz.html file and split your original API key into KEY_PART_1 and KEY_PART_2.");
         return;
       }
 
-      const promptText = `You are an academic server. Target Audience: ${selectedClass}, Subject: ${selectedSubject}, Chapter: ${selectedChapter}. Generate exactly ONE multiple-choice question relevant to this syllabus standard. You must respond ONLY with a valid JSON object matching this syntax: {"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0, "explanation": "..."}. Do not use markdown code blocks. Do not add explanations outside the JSON object.`;
-
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-        });
-
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          const systemMsg = errData.error?.message || "Invalid Handshake Response";
-          const statusCode = response.status;
-          
-          if (statusCode === 400) {
-            showMobileError(`API Error (${statusCode})`, "Google rejected this key. Make sure it matches your AI Studio screen key perfectly and has no extra spaces.");
-          } else if (statusCode === 429) {
-            showMobileError(`API Error (${statusCode})`, "Rate limit reached. Wait 10 seconds and tap retry.");
-          } else {
-            showMobileError(`API Error (${statusCode})`, systemMsg);
-          }
-          return;
-        }
-
-        const data = await response.json();
-        let textResponse = data.candidates[0].content.parts[0].text.trim();
+        // Fetch the very first question to show the user
+        currentQuestionData = await requestQuestionFromAI();
+        renderQuizToUI(currentQuestionData);
         
-        // Clean out markdown blocks if the AI forced them in
-        textResponse = textResponse.replace(/^```json/i, "").replace(/^```/, "").replace(/```$/, "").trim();
-
-        // Parse and render
-        const parsedQuiz = JSON.parse(textResponse);
-        renderQuizToUI(parsedQuiz);
-
+        // Immediately trigger background buffering for the *next* question right away!
+        preloadNextQuestion();
       } catch (error) {
-        console.error(error);
-        showMobileError("Format Error", `The AI returned messy data or your internet connection cut out. Tap retry to load again. Details: ${error.message}`);
+        showMobileError("Connection Failed", `Failed to start session. Details: ${error.message}`);
       }
     }
 
     /**
-     * Helper function to print clean errors right onto your mobile device screen
+     * Silent Background Buffer Routine
+     */
+    async function preloadNextQuestion() {
+      if (isFetchingNext || nextQuestionData !== null) return;
+      
+      isFetchingNext = true;
+      document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Pre-loading...`;
+      
+      try {
+        nextQuestionData = await requestQuestionFromAI();
+        document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ready`;
+      } catch (e) {
+        console.error("Silent buffer failed, will retry on next swap:", e);
+        document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Buffer Error`;
+      } finally {
+        isFetchingNext = false;
+      }
+    }
+
+    /**
+     * Manages instantaneous interface transitions when clicking Next
+     */
+    function handleNextClick() {
+      // If the background question finished pre-loading successfully, use it immediately!
+      if (nextQuestionData) {
+        currentQuestionData = nextQuestionData;
+        nextQuestionData = null; // Clear pool placeholder
+        
+        renderQuizToUI(currentQuestionData);
+        preloadNextQuestion(); // Start cooking the next background question instantly
+      } else {
+        // Fallback: If user answered faster than the API returned text, drop to active screen loader
+        document.getElementById('loading-card').classList.remove('hidden');
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('loading-text').innerText = "Finishing background question render packet...";
+        
+        waitForBufferToComplete();
+      }
+    }
+
+    /**
+     * Active security loop interval fallback counter
+     */
+    function waitForBufferToComplete() {
+      const checkInterval = setInterval(() => {
+        if (nextQuestionData) {
+          clearInterval(checkInterval);
+          currentQuestionData = nextQuestionData;
+          nextQuestionData = null;
+          renderQuizToUI(currentQuestionData);
+          preloadNextQuestion();
+        }
+      }, 500);
+    }
+
+    /**
+     * Helper function to print clean errors onto screen
      */
     function showMobileError(title, description) {
+      document.getElementById('loading-card').classList.remove('hidden');
+      document.getElementById('quiz-card').classList.add('hidden');
       document.getElementById('loading-card').innerHTML = `
         <div class="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold rounded-xl text-xs inline-block">
           ⚠️ ${title}
         </div>
         <p class="text-xs text-slate-400 mt-3 px-4 leading-relaxed">${description}</p>
-        <button onclick="fetchAIQuestion()" class="mt-4 bg-slate-800 border border-white/10 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all">
-          🔄 Retry Connection
+        <button onclick="initialBoot()" class="mt-4 bg-slate-800 border border-white/10 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all">
+          🔄 Restart Room Setup
         </button>
       `;
     }
 
     /**
-     * Maps the parsed JSON attributes directly into the UI nodes
+     * Maps the parsed JSON attributes directly into UI nodes
      */
     function renderQuizToUI(quizObj) {
+      hasAnswered = false;
       currentCorrectIndex = parseInt(quizObj.correctIndex);
       
       document.getElementById('question-text').innerText = quizObj.question;
       document.getElementById('explanation-text').innerText = quizObj.explanation;
+      document.getElementById('explanation-box').classList.add('hidden');
+      document.getElementById('next-btn').classList.add('hidden');
 
       const container = document.getElementById('options-container');
       container.innerHTML = ""; 
@@ -190,7 +241,7 @@
     }
 
     /**
-     * Visual grading state triggers when a student taps any choice button
+     * Visual grading selection engine
      */
     function selectAnswer(selectedIndex, selectedBtn) {
       if (hasAnswered) return; 
@@ -203,16 +254,13 @@
         document.getElementById('score-counter').innerText = `Score: ${globalScore}`;
         selectedBtn.classList.add('border-emerald-500/50', 'bg-emerald-500/10');
         selectedBtn.querySelector('span').classList.add('bg-emerald-500', 'text-slate-950');
-        
         document.getElementById('feedback-heading').innerText = "🎉 Correct Answer";
         document.getElementById('feedback-heading').className = "font-bold text-xs uppercase tracking-wider text-emerald-400";
       } else {
         selectedBtn.classList.add('border-rose-500/50', 'bg-rose-500/10');
         selectedBtn.querySelector('span').classList.add('bg-rose-500', 'text-white');
-        
         const trueBtn = allOptionButtons[currentCorrectIndex];
         trueBtn.classList.add('border-emerald-500/30', 'bg-emerald-500/5');
-        
         document.getElementById('feedback-heading').innerText = "❌ Incorrect Answer";
         document.getElementById('feedback-heading').className = "font-bold text-xs uppercase tracking-wider text-rose-400";
       }
@@ -226,12 +274,8 @@
       document.getElementById('next-btn').classList.remove('hidden');
     }
 
-    // Run automatically if key configuration exists
-    if (KEY_PART_1 === "PASTE_FIRST_HALF_HERE" || KEY_PART_2 === "PASTE_SECOND_HALF_HERE") {
-      showMobileError("Setup Incomplete", "Please open your quiz.html file and split your original API key into KEY_PART_1 and KEY_PART_2.");
-    } else {
-      fetchAIQuestion();
-    }
+    // Launch core initial boot load engine on script evaluation
+    initialBoot();
   </script>
 </body>
         </html>
