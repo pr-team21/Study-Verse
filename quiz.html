@@ -27,7 +27,7 @@
     
     <div id="loading-card" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-8 text-center shadow-xl space-y-4">
       <div id="spinner-element" class="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto"></div>
-      <p id="loading-text" class="text-slate-400 font-bold text-sm animate-pulse">Gemini AI is building a unique practice question...</p>
+      <p id="loading-text" class="text-slate-400 font-bold text-sm mt-4 animate-pulse">Gemini AI is building a unique practice question...</p>
     </div>
 
     <div id="quiz-card" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-6 shadow-xl space-y-6 hidden">
@@ -62,18 +62,13 @@
   </footer>
 
   <script>
-    // 🔒 LINE 63: PASTE YOUR SCRAMBLED KEY INSIDE THESE QUOTES
-    const SCRAMBLED_KEY = "QVEuQWI4Uk42Sm0yejFUaC1KRzhJX2tnNy1KMTNsNHRUMGhJNGdRSk5JTEFObFcwZzNlcUE=";
+    // 🔒 SPLIT KEY CONFIGURATION
+    // Cut your original Gemini key in half and paste the pieces below!
+    const KEY_PART_1 = "AQ.Ab8RN6If2HxXudFByncCO7";
+    const KEY_PART_2 = "-1yBGg1AZYjNLzM0wuaolMhGcfLg";
 
-    // Decodes key at runtime safely
-    let GEMINI_API_KEY = "";
-    try {
-      if (SCRAMBLED_KEY && SCRAMBLED_KEY !== "QVEuQWI4Uk42SkxHQXlOaUxZa3VyNU5GMzh2dkZ4YmQ0V1VoMjJZSmFqOHNEMUlhUGhWOFE=") {
-        GEMINI_API_KEY = atob(SCRAMBLED_KEY.trim());
-      }
-    } catch (e) {
-      console.error("Base64 decode error:", e);
-    }
+    // Combines the parts automatically in your phone's memory
+    const GEMINI_API_KEY = KEY_PART_1.trim() + KEY_PART_2.trim();
 
     // Grab session metadata passed from your practice.html selections
     const selectedClass = sessionStorage.getItem('quiz_class') || "Class 12";
@@ -107,8 +102,13 @@
       `;
 
       // Pre-flight validation check
-      if (!GEMINI_API_KEY || GEMINI_API_KEY.trim() === "" || !GEMINI_API_KEY.startsWith("AIza")) {
-        showMobileError("Key Decode Error", "Your SCRAMBLED_KEY did not decode into a valid Google API key format. Go back to base64encode.org, scramble your key again, and paste it carefully on line 63 with no spaces.");
+      if (KEY_PART_1 === "PASTE_FIRST_HALF_HERE" || KEY_PART_2 === "PASTE_SECOND_HALF_HERE") {
+        showMobileError("Setup Incomplete", "Please paste your split key pieces into line 63 and 64.");
+        return;
+      }
+
+      if (!GEMINI_API_KEY.startsWith("AIza")) {
+        showMobileError("Key Format Error", "The combined key pieces do not start with 'AIza'. Make sure you copied the original key correctly from Google AI Studio.");
         return;
       }
 
@@ -127,7 +127,7 @@
           const statusCode = response.status;
           
           if (statusCode === 400) {
-            showMobileError(`API Error (${statusCode})`, "Google rejected this key. Generate a BRAND NEW key in AI Studio, encrypt it at base64encode.org, and update line 63.");
+            showMobileError(`API Error (${statusCode})`, "Google rejected this key. It might have been leaked or blocked previously. Go create a completely fresh key in AI Studio.");
           } else if (statusCode === 429) {
             showMobileError(`API Error (${statusCode})`, "Rate limit reached. Wait 10 seconds and tap retry.");
           } else {
@@ -148,7 +148,7 @@
 
       } catch (error) {
         console.error(error);
-        showMobileError("Format Error", `The AI returned plain text instead of structured data. Tap retry to generate a fresh layout. Details: ${error.message}`);
+        showMobileError("Format Error", `The AI returned messy data or your internet connection cut out. Tap retry to load again. Details: ${error.message}`);
       }
     }
 
@@ -232,11 +232,12 @@
     }
 
     // Run automatically if key configuration exists
-    if (SCRAMBLED_KEY === "PASTE_YOUR_SCRAMBLED_BASE64_STRING_HERE") {
-      showMobileError("Setup Incomplete", "Please open your quiz.html file and paste your scrambled Base64 key text string directly into line 63.");
+    if (KEY_PART_1 === "PASTE_FIRST_HALF_HERE" || KEY_PART_2 === "PASTE_SECOND_HALF_HERE") {
+      showMobileError("Setup Incomplete", "Please open your quiz.html file and split your original API key into KEY_PART_1 and KEY_PART_2.");
     } else {
       fetchAIQuestion();
     }
   </script>
 </body>
-</html>
+          </html>
+  
