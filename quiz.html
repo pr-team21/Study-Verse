@@ -36,7 +36,7 @@
         <div class="flex justify-between items-center">
           <div class="inline-block text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-bold">MULTIPLE CHOICE</div>
           <span id="preload-status" class="text-[9px] text-slate-500 font-bold flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Buffered
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Idle
           </span>
         </div>
         <p id="question-text" class="text-base sm:text-lg font-bold leading-relaxed text-slate-100">
@@ -93,7 +93,7 @@
     document.getElementById('chapter-title').innerText = selectedChapter;
 
     /**
-     * Core function responsible for making the structural network handshake
+     * Core network handshake function
      */
     async function requestQuestionFromAI() {
       const promptText = `You are an academic server. Target Audience: ${selectedClass}, Subject: ${selectedSubject}, Chapter: ${selectedChapter}. Generate exactly ONE multiple-choice question relevant to this syllabus standard. You must respond ONLY with a valid JSON object matching this syntax: {"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0, "explanation": "..."}. Do not use markdown code blocks. Do not add explanations outside the JSON object.`;
@@ -125,76 +125,72 @@
         return;
       }
 
+      // Re-initialize loader visual state
+      document.getElementById('loading-card').classList.remove('hidden');
+      document.getElementById('quiz-card').classList.add('hidden');
+      document.getElementById('loading-text').innerText = "Gemini AI is building your practice room...";
+
       try {
-        // Fetch the very first question to show the user
         currentQuestionData = await requestQuestionFromAI();
         renderQuizToUI(currentQuestionData);
         
-        // Immediately trigger background buffering for the *next* question right away!
-        preloadNextQuestion();
+        // Give the API 2 seconds of breathing room before preloading the next card
+        setTimeout(preloadNextQuestion, 2000);
       } catch (error) {
-        showMobileError("Connection Failed", `Failed to start session. Details: ${error.message}`);
+        showMobileError("Connection Failed", `Details: ${error.message}`);
       }
     }
 
     /**
-     * Silent Background Buffer Routine
+     * Resilient Background Buffer Routine (Fails Silently)
      */
     async function preloadNextQuestion() {
       if (isFetchingNext || nextQuestionData !== null) return;
       
       isFetchingNext = true;
-      document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Pre-loading...`;
+      document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pre-loading...`;
       
       try {
         nextQuestionData = await requestQuestionFromAI();
         document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ready`;
       } catch (e) {
-        console.error("Silent buffer failed, will retry on next swap:", e);
-        document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Buffer Error`;
+        console.log("Background preloading paused due to server load. Will fetch on-demand next turn.");
+        nextQuestionData = null; // Ensure it stays empty so fallback triggers smoothly
+        document.getElementById('preload-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span> On-Demand Mode`;
       } finally {
         isFetchingNext = false;
       }
     }
 
     /**
-     * Manages instantaneous interface transitions when clicking Next
+     * Handles transitions when clicking Next
      */
-    function handleNextClick() {
-      // If the background question finished pre-loading successfully, use it immediately!
+    async function handleNextClick() {
       if (nextQuestionData) {
+        // Instant transition if pre-loaded successfully!
         currentQuestionData = nextQuestionData;
-        nextQuestionData = null; // Clear pool placeholder
+        nextQuestionData = null; 
         
         renderQuizToUI(currentQuestionData);
-        preloadNextQuestion(); // Start cooking the next background question instantly
+        setTimeout(preloadNextQuestion, 2000);
       } else {
-        // Fallback: If user answered faster than the API returned text, drop to active screen loader
+        // Safe Fallback: If preloading was skipped or failed silently, fetch normally on screen
         document.getElementById('loading-card').classList.remove('hidden');
         document.getElementById('quiz-card').classList.add('hidden');
-        document.getElementById('loading-text').innerText = "Finishing background question render packet...";
+        document.getElementById('loading-text').innerText = "Generating next practice question...";
         
-        waitForBufferToComplete();
+        try {
+          currentQuestionData = await requestQuestionFromAI();
+          renderQuizToUI(currentQuestionData);
+          setTimeout(preloadNextQuestion, 2000);
+        } catch (error) {
+          showMobileError("Connection Failed", `Details: ${error.message}`);
+        }
       }
     }
 
     /**
-     * Active security loop interval fallback counter
-     */
-    function waitForBufferToComplete() {
-      const checkInterval = setInterval(() => {
-        if (nextQuestionData) {
-          clearInterval(checkInterval);
-          currentQuestionData = nextQuestionData;
-          nextQuestionData = null;
-          renderQuizToUI(currentQuestionData);
-          preloadNextQuestion();
-        }
-      }, 500);
-    }
-
-    /**
-     * Helper function to print clean errors onto screen
+     * Helper function to print errors cleanly onto screen
      */
     function showMobileError(title, description) {
       document.getElementById('loading-card').classList.remove('hidden');
@@ -205,7 +201,7 @@
         </div>
         <p class="text-xs text-slate-400 mt-3 px-4 leading-relaxed">${description}</p>
         <button onclick="initialBoot()" class="mt-4 bg-slate-800 border border-white/10 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all">
-          🔄 Restart Room Setup
+          🔄 Retry Connection
         </button>
       `;
     }
@@ -274,9 +270,8 @@
       document.getElementById('next-btn').classList.remove('hidden');
     }
 
-    // Launch core initial boot load engine on script evaluation
+    // Launch core initial boot
     initialBoot();
   </script>
 </body>
-        </html>
-          
+</html>
