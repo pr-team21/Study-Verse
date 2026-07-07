@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Verse - Focus Room</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Quicksand', sans-serif; background-color: #0f172a; }
+    .timer-glow-study { box-shadow: 0 0 40px -10px rgba(34, 211, 238, 0.2); }
+    .timer-glow-break { box-shadow: 0 0 40px -10px rgba(52, 211, 153, 0.2); }
+  </style>
+</head>
+<body class="min-h-screen text-white flex flex-col justify-between">
+
+  <!-- Header Navigation -->
+  <header class="bg-slate-900 p-4 border-b border-white/10 flex justify-between items-center px-6 shadow-md">
+    <a href="practice.html" class="text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors">◀ Dashboard</a>
+    <div class="text-center">
+      <span class="text-[10px] uppercase tracking-wider text-slate-500 block font-bold">Deep Work Mode</span>
+      <h1 class="font-bold text-sm sm:text-base text-cyan-400">Focus Zone</h1>
+    </div>
+    <div class="w-16"></div> <!-- Balance spacing -->
+  </header>
+
+  <!-- Main Focus Workspace -->
+  <main class="flex-grow w-full max-w-md mx-auto p-4 flex flex-col justify-center items-center space-y-6">
+    
+    <!-- ⏳ The Pomodoro Card -->
+    <div id="timer-card" class="w-full bg-slate-900 border border-white/10 rounded-3xl p-8 text-center shadow-xl timer-glow-study transition-all duration-500">
+      
+      <!-- Mode Status Badge -->
+      <span id="timer-status" class="inline-block text-[11px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4">
+        🧠 Focus Session (40 Mins)
+      </span>
+
+      <!-- Main Giant Countdown Display -->
+      <div id="timer-display" class="text-6xl sm:text-7xl font-bold tracking-tight text-slate-100 my-4 font-mono">
+        40:00
+      </div>
+
+      <!-- Action Controller Group -->
+      <div class="flex justify-center space-x-3 mt-6">
+        <button id="start-pause-btn" onclick="toggleTimer()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs sm:text-sm font-bold px-6 py-3 rounded-xl shadow-lg transition-all transform active:scale-95">
+          Start Focus
+        </button>
+        <button onclick="resetTimer()" class="bg-slate-800 hover:bg-slate-700 border border-white/5 text-slate-300 text-xs font-bold px-4 py-3 rounded-xl transition-all transform active:scale-95">
+          Reset
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 🎵 Lo-Fi Audio Station Control Box -->
+    <div class="w-full bg-slate-900/60 border border-white/5 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center border border-white/5 text-lg">
+          🎧
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-slate-200">Study Ambient Station</h4>
+          <p id="audio-state-text" class="text-[10px] text-slate-500 font-bold">Audio Paused</p>
+        </div>
+      </div>
+      
+      <!-- Audio Element Trigger Button -->
+      <button id="audio-toggle-btn" onclick="toggleAudio()" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl flex items-center justify-center text-xs text-slate-300 transition-all transform active:scale-95">
+        ▶
+      </button>
+    </div>
+
+    <!-- Hidden audio track snippet wrapper -->
+    <audio id="ambient-player" loop src="https://codeskulptor-demos.commondatastorage.googleapis.com/gamedata/desert_theme.mp3"></audio>
+
+  </main>
+
+  <!-- Branded Footer -->
+  <footer class="bg-slate-950 p-3 text-center text-[11px] text-slate-600 border-t border-white/5 font-bold">
+    Study Verse Productivity Engine • Pathak Rohit
+  </footer>
+
+  <!-- 🧠 Core Logic Framework Execution Scripts -->
+  <script>
+    let timerId = null;
+    let isRunning = false;
+    let currentMode = 'study'; // Modes: 'study' or 'break'
+    let timeLeft = 40 * 60; // 🎯 CHANGED TO 40 MINUTES
+
+    const display = document.getElementById('timer-display');
+    const startPauseBtn = document.getElementById('start-pause-btn');
+    const statusBadge = document.getElementById('timer-status');
+    const cardFrame = document.getElementById('timer-card');
+    
+    const audioPlayer = document.getElementById('ambient-player');
+    const audioBtn = document.getElementById('audio-toggle-btn');
+    const audioText = document.getElementById('audio-state-text');
+
+    /**
+     * Updates the countdown timer text on screen
+     */
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    /**
+     * Start/Pause Toggle Engine Trigger
+     */
+    function toggleTimer() {
+      if (isRunning) {
+        clearInterval(timerId);
+        isRunning = false;
+        startPauseBtn.innerText = currentMode === 'study' ? "Resume Focus" : "Resume Break";
+        startPauseBtn.className = startPauseBtn.className.replace('bg-amber-500 hover:bg-amber-600', 'bg-cyan-500 hover:bg-cyan-600');
+      } else {
+        isRunning = true;
+        startPauseBtn.innerText = "Pause Session";
+        startPauseBtn.className = startPauseBtn.className.replace('bg-cyan-500 hover:bg-cyan-600', 'bg-amber-500 hover:bg-amber-600');
+        
+        timerId = setInterval(() => {
+          timeLeft--;
+          updateDisplay();
+
+          if (timeLeft <= 0) {
+            clearInterval(timerId);
+            isRunning = false;
+            switchModes();
+          }
+        }, 1000);
+      }
+    }
+
+    /**
+     * Automatically switch profiles between study cycles and break cycles
+     */
+    function switchModes() {
+      if (currentMode === 'study') {
+        currentMode = 'break';
+        timeLeft = 5 * 60; // 5 minute short breaks
+        
+        statusBadge.innerText = "☕ Break Time";
+        statusBadge.className = "inline-block text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4";
+        startPauseBtn.className = "bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs sm:text-sm font-bold px-6 py-3 rounded-xl shadow-lg transition-all transform active:scale-95";
+        startPauseBtn.innerText = "Start Break";
+        
+        cardFrame.classList.replace('timer-glow-study', 'timer-glow-break');
+      } else {
+        currentMode = 'study';
+        timeLeft = 40 * 60; // 🎯 BACK TO 40 MINUTES
+        
+        statusBadge.innerText = "🧠 Focus Session (40 Mins)";
+        statusBadge.className = "inline-block text-[11px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4";
+        startPauseBtn.className = "bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs sm:text-sm font-bold px-6 py-3 rounded-xl shadow-lg transition-all transform active:scale-95";
+        startPauseBtn.innerText = "Start Focus";
+        
+        cardFrame.classList.replace('timer-glow-break', 'timer-glow-study');
+      }
+      updateDisplay();
+    }
+
+    /**
+     * Resets the entire timer sequence to safe defaults
+     */
+    function resetTimer() {
+      clearInterval(timerId);
+      isRunning = false;
+      currentMode = 'study';
+      timeLeft = 40 * 60; // 🎯 RESET DEFAULTS TO 40 MINS
+      
+      statusBadge.innerText = "🧠 Focus Session (40 Mins)";
+      statusBadge.className = "inline-block text-[11px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4";
+      startPauseBtn.className = "bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs sm:text-sm font-bold px-6 py-3 rounded-xl shadow-lg transition-all transform active:scale-95";
+      startPauseBtn.innerText = "Start Focus";
+      
+      cardFrame.className = "w-full bg-slate-900 border border-white/10 rounded-3xl p-8 text-center shadow-xl timer-glow-study transition-all duration-500";
+      
+      updateDisplay();
+    }
+
+    /**
+     * Controls the embedded ambient Lo-Fi background track
+     */
+    function toggleAudio() {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        audioBtn.innerText = "⏸";
+        audioBtn.classList.add('border-cyan-500/30', 'text-cyan-400');
+        audioText.innerText = "Now Playing... 🎧";
+        audioText.classList.replace('text-slate-500', 'text-cyan-400');
+      } else {
+        audioPlayer.pause();
+        audioBtn.innerText = "▶";
+        audioBtn.classList.remove('border-cyan-500/30', 'text-cyan-400');
+        audioText.innerText = "Audio Paused";
+        audioText.classList.replace('text-cyan-400', 'text-slate-500');
+      }
+    }
+  </script>
+</body>
+</html>
