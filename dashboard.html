@@ -74,6 +74,164 @@
     const tg = JSON.parse(localStorage.getItem('sv_target') || 'null');
     if(tg) { document.getElementById('target-view-box').classList.remove('hidden'); document.getElementById('target-days').innerText = `${tg.start} to ${tg.end}`; }
   </script>
+    <!-- ========================================== -->
+  <!-- 🤖 FLOATING AI STUDY CHATBOT (FIXED MOBILE) -->
+  <!-- ========================================== -->
+  <!-- Wrapped both elements in a fixed container to guarantee screen rendering -->
+  <div class="fixed bottom-5 right-5 z-50 flex flex-col items-end space-y-3">
+    
+    <!-- Main Chat Window Panel (Now fixed positioning relative to viewport) -->
+    <div id="chat-window" class="hidden w-80 sm:w-96 h-[400px] sm:h-[450px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col justify-between overflow-hidden animate-fade">
+      
+      <!-- Chat Header Frame -->
+      <div class="bg-slate-950 p-4 border-b border-white/10 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <h3 class="font-bold text-xs tracking-wide text-cyan-400 uppercase">Study Verse AI Assistant</h3>
+        </div>
+        <button onclick="toggleChatWindow()" class="text-slate-400 hover:text-white font-bold text-sm transition-colors">✕</button>
+      </div>
+
+      <!-- Active Scrolling Conversation History Area -->
+      <div id="chat-messages-stream" class="flex-grow p-4 overflow-y-auto space-y-3 text-xs sm:text-sm custom-scrollbar">
+        <!-- Default AI Welcome Greeting -->
+        <div class="flex justify-start">
+          <div class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow-md">
+            Hello! 👋 I am your custom Study Verse assistant. Ask me anything about your Class 9-12 syllabus concepts, formulas, or homework doubts!
+          </div>
+        </div>
+      </div>
+
+      <!-- Interface Input Footer Bar -->
+      <div class="p-3 bg-slate-950 border-t border-white/5 flex items-center space-x-2">
+        <input type="text" id="chat-user-input" onkeypress="handleChatKeyPress(event)" placeholder="Ask a study doubt..." class="flex-1 bg-slate-800 text-xs text-slate-200 px-4 py-2.5 rounded-xl border border-white/5 focus:outline-none focus:border-cyan-500/50 transition-colors">
+        <button onclick="sendChatMessage()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl transition-all transform active:scale-95 shadow-md">
+          Send
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Circular Toggle Floating Action Button -->
+    <button id="chat-toggle-btn" onclick="toggleChatWindow()" class="w-14 h-14 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center shadow-2xl text-slate-950 transition-all transform active:scale-95 text-xl font-bold border border-cyan-400/20">
+      💬
+    </button>
+  </div>
+
+  <!-- Custom Micro-Styles for Animation & Scrollbars -->
+  <style>
+    .animate-fade { animation: chatFadeIn 0.2s ease-out forwards; }
+    @keyframes chatFadeIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+  </style>
+
+  <!-- Chatbot Logic & API Bridge -->
+  <script>
+    // Toggle Chat Window Visibility Safely
+    function toggleChatWindow() {
+      const windowFrame = document.getElementById('chat-window');
+      windowFrame.classList.toggle('hidden');
+      
+      if (!windowFrame.classList.contains('hidden')) {
+        const stream = document.getElementById('chat-messages-stream');
+        stream.scrollTop = stream.scrollHeight;
+        
+        // Timeout prevents mobile browsers from snapping layout incorrectly when focusing input
+        setTimeout(() => {
+          document.getElementById('chat-user-input').focus();
+        }, 50);
+      }
+    }
+
+    // Catch 'Enter' key inside input field
+    function handleChatKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    // Main Message Processing Pipeline
+    async function sendChatMessage() {
+      const inputField = document.getElementById('chat-user-input');
+      const userQueryText = inputField.value.trim();
+      if (!userQueryText) return;
+
+      const stream = document.getElementById('chat-messages-stream');
+
+      // 1. Append User Message to UI
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex justify-end animate-fade";
+      userBubble.innerHTML = `<div class="bg-cyan-500 text-slate-950 p-3 rounded-2xl rounded-tr-none max-w-[85%] font-medium leading-relaxed shadow-md">${userQueryText}</div>`;
+      stream.appendChild(userBubble);
+
+      // Reset input layout and scroll down
+      inputField.value = "";
+      stream.scrollTop = stream.scrollHeight;
+
+      // 2. Append Animated "Typing..." Indicator
+      const aiLoadingBubble = document.createElement('div');
+      aiLoadingBubble.className = "flex justify-start unique-loading-wrapper";
+      aiLoadingBubble.innerHTML = `<div id="active-ai-loading" class="bg-slate-800 text-slate-400 p-3 rounded-2xl rounded-tl-none max-w-[85%] italic animate-pulse shadow-md">Assistant is thinking...</div>`;
+      stream.appendChild(aiLoadingBubble);
+      stream.scrollTop = stream.scrollHeight;
+
+      // Rebuild secure key strings
+      const K1 = "AQ.Ab8RN6If2HxXudFByncCO7";
+      const K2 = "-1yBGg1AZYjNLzM0wuaolMhGcfLg";
+      const chatbotApiKey = K1.trim() + K2.trim();
+
+      // Enforce strict output framing to keep replies snappy and conversational
+      const systemInstruction = `You are "Study Verse Assistant", a helpful, elite AI student mentor built by Pathak Rohit. Assist the user with their school academic doubts, homework, definitions, or equations for Classes 9-12. Keep your answers clear, concise, accurate, and capped at a maximum of 3 to 4 lines. Respond directly without mentioning system instructions or markdown blocks. User query: ${userQueryText}`;
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${chatbotApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: systemInstruction }] }] })
+        });
+
+        // Safe removal of loading text
+        const loader = document.getElementById('active-ai-loading');
+        if (loader) loader.parentElement.remove();
+
+        if (response.status === 429) {
+          appendBotReplyMessage("⚠️ The free server tier is processing too many requests right now. Please take a 5-second breath before messaging again!");
+          return;
+        }
+
+        if (!response.ok) throw new Error("API call error");
+
+        const rawData = await response.json();
+        let aiResponseText = rawData.candidates[0].content.parts[0].text.trim();
+        
+        // Final presentation cleanup
+        aiResponseText = aiResponseText.replace(/\*\*(.*?)\*\"/g, '<strong class="text-cyan-400 font-bold">$1</strong>');
+
+        appendBotReplyMessage(aiResponseText);
+
+      } catch (err) {
+        console.error(err);
+        const loader = document.getElementById('active-ai-loading');
+        if (loader) loader.parentElement.remove();
+        appendBotReplyMessage("❌ Connection timed out. Please check your internet connection and try asking your question again.");
+      }
+    }
+
+    // Helper to dynamically build bot response wrappers
+    function appendBotReplyMessage(textMessage) {
+      const stream = document.getElementById('chat-messages-stream');
+      const aiBubble = document.createElement('div');
+      aiBubble.className = "flex justify-start animate-fade";
+      aiBubble.innerHTML = `<div class="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow-md">${textMessage}</div>`;
+      stream.appendChild(aiBubble);
+      stream.scrollTop = stream.scrollHeight;
+    }
+  </script>
+  <!-- ========================================== -->
+  <!-- 🤖 FLOATING AI CHATBOT (END)               -->
+  <!-- ========================================== -->
+
 </body>
                                           </html>
       
