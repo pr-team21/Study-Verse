@@ -16,7 +16,7 @@
 
   <!-- Header Navigation -->
   <header class="bg-slate-900 p-4 border-b border-white/10 flex justify-between items-center px-6 shadow-md">
-    <a href="practice.html" class="text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors">◀ Dashboard</a>
+    <a href="dashboard.html" class="text-xs font-bold text-slate-400 hover:text-cyan-400 transition-colors">◀ Dashboard</a>
     <div class="text-center">
       <span class="text-[10px] uppercase tracking-wider text-slate-500 block font-bold">Deep Work Mode</span>
       <h1 class="font-bold text-sm sm:text-base text-cyan-400">Focus Zone</h1>
@@ -70,9 +70,9 @@
       </button>
     </div>
 
-    <!-- Hidden audio track snippet wrapper -->
-    <audio id="ambient-player" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-    
+    <!-- Hidden audio track snippet wrapper (Verified working open stream link) -->
+    <audio id="ambient-player" loop preload="auto" src="https://scummbar.com/mi2/MI1-CD/01%20-%20Opening%20Themes%20-%20Introduction.mp3"></audio>
+
   </main>
 
   <!-- Branded Footer -->
@@ -84,21 +84,18 @@
   <script>
     let timerId = null;
     let isRunning = false;
-    let currentMode = 'study'; // Modes: 'study' or 'break'
-    let timeLeft = 40 * 60; // 🎯 CHANGED TO 40 MINUTES
+    let currentMode = 'study'; 
+    let timeLeft = 40 * 60; // 40 minutes pattern
 
     const display = document.getElementById('timer-display');
     const startPauseBtn = document.getElementById('start-pause-btn');
     const statusBadge = document.getElementById('timer-status');
     const cardFrame = document.getElementById('timer-card');
-    
-    const audioPlayer = document.getElementById('ambient-player');
-    const audioBtn = document.getElementById('audio-toggle-btn');
-    const audioText = document.getElementById('audio-state-text');
 
     /**
      * Updates the countdown timer text on screen
      */
+    document.title = "Study Verse - Focus Room";
     function updateDisplay() {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
@@ -138,7 +135,7 @@
     function switchModes() {
       if (currentMode === 'study') {
         currentMode = 'break';
-        timeLeft = 5 * 60; // 5 minute short breaks
+        timeLeft = 5 * 60; 
         
         statusBadge.innerText = "☕ Break Time";
         statusBadge.className = "inline-block text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4";
@@ -148,7 +145,7 @@
         cardFrame.classList.replace('timer-glow-study', 'timer-glow-break');
       } else {
         currentMode = 'study';
-        timeLeft = 40 * 60; // 🎯 BACK TO 40 MINUTES
+        timeLeft = 40 * 60; 
         
         statusBadge.innerText = "🧠 Focus Session (40 Mins)";
         statusBadge.className = "inline-block text-[11px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4";
@@ -167,7 +164,7 @@
       clearInterval(timerId);
       isRunning = false;
       currentMode = 'study';
-      timeLeft = 40 * 60; // 🎯 RESET DEFAULTS TO 40 MINS
+      timeLeft = 40 * 60; 
       
       statusBadge.innerText = "🧠 Focus Session (40 Mins)";
       statusBadge.className = "inline-block text-[11px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold tracking-wider uppercase mb-4";
@@ -180,15 +177,25 @@
     }
 
     /**
-     * Controls the embedded ambient Lo-Fi background track
+     * Controls the embedded ambient background track with mobile freeze-fixes
      */
     function toggleAudio() {
+      const audioPlayer = document.getElementById('ambient-player');
+      const audioBtn = document.getElementById('audio-toggle-btn');
+      const audioText = document.getElementById('audio-state-text');
+
       if (audioPlayer.paused) {
-        audioPlayer.play();
-        audioBtn.innerText = "⏸";
-        audioBtn.classList.add('border-cyan-500/30', 'text-cyan-400');
-        audioText.innerText = "Now Playing... 🎧";
-        audioText.classList.replace('text-slate-500', 'text-cyan-400');
+        audioPlayer.play()
+          .then(() => {
+            audioBtn.innerText = "⏸";
+            audioBtn.classList.add('border-cyan-500/30', 'text-cyan-400');
+            audioText.innerText = "Now Playing... 🎧";
+            audioText.classList.replace('text-slate-500', 'text-cyan-400');
+          })
+          .catch(err => {
+            console.error("Playback blocked:", err);
+            alert("Please tap anywhere on your screen first, then press play! Mobile browsers protect users by blocking sudden background noises until you interact with the page.");
+          });
       } else {
         audioPlayer.pause();
         audioBtn.innerText = "▶";
@@ -199,4 +206,5 @@
     }
   </script>
 </body>
-</html>
+  </html>
+  
