@@ -150,17 +150,14 @@
     // Trigger on boot setup execution
     renderUI();
   </script>
-    <!-- ========================================== -->
-  <!-- 🤖 FLOATING AI STUDY CHATBOT (START)       -->
   <!-- ========================================== -->
-  <div class="fixed bottom-5 right-5 z-50">
-    <!-- Circular Toggle Floating Action Button -->
-    <button id="chat-toggle-btn" onclick="toggleChatWindow()" class="w-14 h-14 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center shadow-2xl text-slate-950 transition-all transform active:scale-95 text-xl font-bold border border-cyan-400/20">
-      💬
-    </button>
-
-    <!-- Main Chat Window Panel -->
-    <div id="chat-window" class="hidden absolute bottom-18 right-0 w-80 sm:w-96 h-[450px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col justify-between overflow-hidden animate-fade">
+  <!-- 🤖 FLOATING AI STUDY CHATBOT (FIXED MOBILE) -->
+  <!-- ========================================== -->
+  <!-- Wrapped both elements in a fixed container to guarantee screen rendering -->
+  <div class="fixed bottom-5 right-5 z-50 flex flex-col items-end space-y-3">
+    
+    <!-- Main Chat Window Panel (Now fixed positioning relative to viewport) -->
+    <div id="chat-window" class="hidden w-80 sm:w-96 h-[400px] sm:h-[450px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col justify-between overflow-hidden animate-fade">
       
       <!-- Chat Header Frame -->
       <div class="bg-slate-950 p-4 border-b border-white/10 flex justify-between items-center">
@@ -190,26 +187,36 @@
       </div>
 
     </div>
+
+    <!-- Circular Toggle Floating Action Button -->
+    <button id="chat-toggle-btn" onclick="toggleChatWindow()" class="w-14 h-14 bg-cyan-500 hover:bg-cyan-600 rounded-full flex items-center justify-center shadow-2xl text-slate-950 transition-all transform active:scale-95 text-xl font-bold border border-cyan-400/20">
+      💬
+    </button>
   </div>
 
   <!-- Custom Micro-Styles for Animation & Scrollbars -->
   <style>
-    .animate-fade { animation: chatFadeIn 0.25s ease-out forwards; }
-    @keyframes chatFadeIn { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .animate-fade { animation: chatFadeIn 0.2s ease-out forwards; }
+    @keyframes chatFadeIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
   </style>
 
   <!-- Chatbot Logic & API Bridge -->
   <script>
-    // Toggle Chat Window Visibility
+    // Toggle Chat Window Visibility Safely
     function toggleChatWindow() {
       const windowFrame = document.getElementById('chat-window');
       windowFrame.classList.toggle('hidden');
+      
       if (!windowFrame.classList.contains('hidden')) {
         const stream = document.getElementById('chat-messages-stream');
         stream.scrollTop = stream.scrollHeight;
-        document.getElementById('chat-user-input').focus();
+        
+        // Timeout prevents mobile browsers from snapping layout incorrectly when focusing input
+        setTimeout(() => {
+          document.getElementById('chat-user-input').focus();
+        }, 50);
       }
     }
 
@@ -275,7 +282,7 @@
         let aiResponseText = rawData.candidates[0].content.parts[0].text.trim();
         
         // Final presentation cleanup
-        aiResponseText = aiResponseText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-400 font-bold">$1</strong>');
+        aiResponseText = aiResponseText.replace(/\*\*(.*?)\*\"/g, '<strong class="text-cyan-400 font-bold">$1</strong>');
 
         appendBotReplyMessage(aiResponseText);
 
@@ -300,7 +307,7 @@
   <!-- ========================================== -->
   <!-- 🤖 FLOATING AI CHATBOT (END)               -->
   <!-- ========================================== -->
-
+  
 </body>
             </html>
       
